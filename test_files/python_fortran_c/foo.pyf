@@ -1,0 +1,13 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module foo ! in 
+    interface  ! in :foo
+        subroutine hello(a) ! in :foo:foo.f90
+            integer :: a
+        end subroutine hello
+    end interface 
+end python module foo
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

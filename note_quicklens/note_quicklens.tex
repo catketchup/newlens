@@ -1,0 +1,197 @@
+% Created 2019-05-23 Thu 15:42
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{ketchup}
+\date{\today}
+\title{note\_quicklens}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.2 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{quicklens}
+\label{sec-1}
+\begin{itemize}
+\item 'quicklens/examples/plot$_{\text{lens}}$$_{\text{reconstruction}}$$_{\text{noise}}$$_{\text{levels}}$.py'
+\item calc$_{\text{nlqq}}$( qest$_{\text{TT}}$, cltt, cltt, cltt, flt, flt )
+\item nlqq$_{\text{fullsky}}$
+\item clqq$_{\text{fullsky}}$, resp$_{\text{fullsky}}$
+\item qest.fill$_{\text{clqq}}$, qest.fill$_{\text{resp}}$
+\item 'quicklens/qest/qest.py'
+\item fill$_{\text{clqq}}$
+\item fill$_{\text{clqq}}$$_{\text{fullsky}}$
+\item qe$_{\text{cov}}$$_{\text{fill}}$$_{\text{helper}}$$_{\text{fullsky}}$
+\item def qe$_{\text{cov}}$$_{\text{fill}}$$_{\text{helper}}$$_{\text{fullsky}}$
+\item glq = math.wignerd.gauss$_{\text{legendre}}$$_{\text{quadrature}}$, gp1 =glq.cf$_{\text{from}}$$_{\text{cl}}$, gp2 = glq.cf$_{\text{from}}$$_{\text{cl}}$
+\item 'quicklens/math/wignerd.py'
+\item class gauss$_{\text{legendre}}$$_{\text{quadrature}}$
+\item cf$_{\text{from}}$$_{\text{cl}}$, cl$_{\text{from}}$$_{\text{cf}}$
+\item cwignerd.wignerd$_{\text{cf}}$$_{\text{from}}$$_{\text{cl}}$
+\item 'wignerd.pyf' python mode cwignerd \#pyf is a fortran
+\end{itemize}
+\section{quicklens/qest/qest.py}
+\label{sec-2}
+\begin{itemize}
+\item class qest(object), full-sky, W$^{\text{XY}}$
+\item def eval$_{\text{fulls}}$
+\end{itemize}
+\section{formula}
+\label{sec-3}
+in 'quicklens' 
+flat sky:
+\begin{equation}
+\begin{split}
+W^{XY} =& \sum_{i=0}^{N} \int{d^2 z}(e^{+i*2\pi*s^{i,X}+i*(l_X.z)} W^{i,X}(l_X))\\&(e^{+i*2\pi*s^{i,Y}+i*(l_Y.z)} W^{i,Y}(l_Y))(e^{-i*2\pi*s^{i,L}+i*( -L.z)} W^{i,L}( L ))
+\end{split}
+\end{equation}
+
+curved sky:
+
+
+\begin{equation}
+W^{XY} = \sum_{i=0}^{N_i} \int{d^2 n} {}_s^{i,X}Y_{l_X m_X}(n) W^{i,X}(l_X){}_s^{i,Y}Y_{l_Y m_Y}(n) W^{i,Y}(l_Y){}_s^{i,L}Y_{  L M  }(n) W^{i,L}( L )
+\end{equation}
+\begin{equation}
+q^{XY}(L) = 1/2 \sum_{l_X} \sum_{l_Y}W^{XY}(l_X, l_Y, L) \bar{X}(l_X) \bar{Y}(l_Y)
+\end{equation}
+in  'CMB Lensing Reconstruction on the Full SKy' 
+the general weighted sum of multipole pairs as
+\begin{equation}
+d^{\alpha M}_{L}=\frac{A_{L}^{\alpha}}{\sqrt{L(L+1)}} \sum_{l_{1} m_{1}} \sum_{l_{2} m_{2}}(-1)^{M} \left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {L} \\ {m_{1}} & {m_{2}} & {-M}\end{array}\right) g_{l_{1} l_{2}}^{\alpha}(L) a_{l_{1}}^{m_{1}} b_{l_{2}}^{m_{2}}
+\end{equation}
+so the corresponding weighted function is 
+\begin{equation}
+W_{l_{1}l_{2}L}^{\alpha m_{1}m_{2}M}=\frac{A_{L}^{\alpha}}{\sqrt{L(L+1)}} \sum_{m_{1}} \sum_{m_{2}}(-1)^{M} \left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {L} \\ {m_{1}} & {m_{2}} & {-M}\end{array}\right) g_{l_{1} l_{2}}^{\alpha}(L)
+\end{equation}
+
+\begin{equation}
+d^{\alpha M}_{L}=1/2 \sum_{l_X} \sum_{l_Y}\big[ \frac{A_{L}^{\alpha}}{\sqrt{L(L+1)}} \sum_{m_{1}} \sum_{m_{2}}(-1)^{M} \left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {L} \\ {m_{1}} & {m_{2}} & {-M}\end{array}\right) g_{l_{1} l_{2}}^{\alpha}(L)\big] \bar{X}(l_X) \bar{Y}(l_Y)
+  \end{equation}
+
+the normalization is 
+\begin{equation}
+A_{L}^{\alpha}=L(L+1)(2 L+1)\left\{\sum_{l_{1} l_{2}} g_{l_{1} l_{2}}^{\alpha}(L) f_{l_{1} L l_{2}}^{\alpha}\right\}^{-1}
+\end{equation}
+
+\begin{equation}
+g_{l_{1} l_{2}}^{\alpha}(L)=\frac{C_{l_{2}}^{a a} C_{l_{1}}^{b b} f_{l_{1} L l_{2}}^{\alpha *}-(-1)^{L+l_{1}+l_{2}} C_{l_{1}}^{a b} C_{l_{2}}^{a b} f_{l_{2} L l_{1}}^{\alpha *}}{C_{l_{1}}^{a a} C_{l_{2}}^{a a} C_{l_{1}}^{b b} C_{l_{2}}^{b b}-\left(C_{l_{1}}^{a b} C_{l_{2}}^{a b}\right)^{2}}
+\end{equation}
+
+
+for$A_{L}^{\alpha}$, I define the summation in it as
+\begin{equation}
+B_{L}^{\alpha}
+=\sum_{l_{1} l_{2}} g_{l_{1} l_{2}}^{\alpha}(L) f_{l_{1}Ll_{2}}^{\alpha}
+\end{equation}
+so 
+\begin{equation}
+B_{L}^{\alpha}=g_{l_{1} l_{2}}^{\alpha}(L)=\frac{C_{l_{2}}^{a a} C_{l_{1}}^{b b} f_{l_{1} L l_{2}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}-(-1)^{L+l_{1}+l_{2}} C_{l_{1}}^{a b} C_{l_{2}}^{a b} f_{l_{2} L l_{1}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}}{C_{l_{1}}^{a a} C_{l_{2}}^{a a} C_{l_{1}}^{b b} C_{l_{2}}^{b b}-\left(C_{l_{1}}^{a b} C_{l_{2}}^{a b}\right)^{2}}
+\end{equation}
+
+\begin{equation}
+f_{l_{1} L l_{2}}^{\alpha}=_{s_{a}} F_{l_{1} L l_{2}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{a b}+\beta_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{b \overline{a}}\right]+_{s_{b}} F_{l_{2} L l_{1}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a b}-\beta_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a \overline{b}}\right]
+\end{equation}
+
+\begin{equation}
+\epsilon_{l l^{\prime} L}=\frac{1+(-1)^{L+l+l^{\prime}}}{2}
+\end{equation}
+
+\begin{equation}
+\beta_{l l^{\prime} l L}=\frac{1-(-1)^{L+l+l^{\prime}}}{2 i}
+\end{equation}
+
+\begin{equation}
+\pm s F_{l L l^{\prime}}=\left[L(L+1)+l^{\prime}\left(l^{\prime}+1\right)-l(l+1)\right] \sqrt{\frac{(2 L+1)(2 l+1)\left(2 l^{\prime}+1\right)}{16 \pi}} \left( \begin{array}{ccc}{l} & {L} & {l^{\prime}} \\ { \pm s} & {0} & {\mp s}\end{array}\right)
+\end{equation}
+
+
+in the $B_{L}^{\alpha}$, we need to calculate $f_{l_{1} L l_{2}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}$ and $f_{l_{2} L l_{1}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}$. 
+in these two terms above, there are terms of products of two wigner D-matrices. Each this sort of term can be converted into an integral, in which the integrand ois multiplication of three wigner d-functions. In my coming code, the ff terms shown will be given a function f$_{\text{f}}$(a,b,l1,l2,l3). 
+
+
+\begin{equation}
+\begin{split}
+f_{l_{1} L l_{2}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}=\big\{_{s_{a}} F_{l_{1} L l_{2}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{a b}+\beta^{*}_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{b \overline{a}}\right]+s_{b} F_{l_{2} L l_{1}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a b}-\beta^{*}_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a \overline{b}}\right]\big\} \\
+\big\{_{s_{a}} F_{l_{1} L l_{2}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{a b}+\beta_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{b \overline{a}}\right]+s_{b} F_{l_{2} L l_{1}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a b}-\beta_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a \overline{b}}\right]\big\}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+f_{l_{2} L l_{1}}^{\alpha *}f_{l_{1}Ll_{2}}^{\alpha}=\big\{_{s_{a}} F_{l_{2} L l_{1}}\left[\epsilon_{l_{2} l_{1} L} \tilde{C}_{l_{1}}^{a b}+\beta^{*}_{l_{2} l_{1} L} \tilde{C}_{l_{1}}^{b \overline{a}}\right]+s_{b} F_{l_{1} L l_{2}}\left[\epsilon_{l_{2} l_{1} L} \tilde{C}_{l_{2}}^{a b}-\beta^{*}_{l_{2} l_{1} L} \tilde{C}_{l_{2}}^{a \overline{b}}\right]\big\}\\ 
+\big\{_{s_{a}} F_{l_{1} L l_{2}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{a b}+\beta_{l_{1} l_{2} L} \tilde{C}_{l_{2}}^{b \overline{a}}\right]+s_{b} F_{l_{2} L l_{1}}\left[\epsilon_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a b}-\beta_{l_{1} l_{2} L} \tilde{C}_{l_{1}}^{a \overline{b}}\right]\big\}
+\end{split}
+\end{equation}
+
+
+so it is a story of $_{s_{a}} F_{l_{1} l_{2} l_{3}}{_{s_{b}} F_{l_{1} l_{2} l_{3}}}$ and $_{s_{a}} F_{l_{1} l_{2} l_{3}}{_{s_{b}} F_{l_{3} l_{2} l_{1}}}$
+
+I need a function which can calculate them.
+
+We have:
+\begin{equation}
+\int_{-1}^{1} d(\cos \theta) d_{s_{1} s_{1}^{\prime}}^{\ell_{1}}(\theta) d_{s_{2} s_{2}^{\prime}}^{\ell_{2}}(\theta) d_{s_{3} s_{3}^{\prime}}^{\ell_{3}}(\theta)=2 \left( \begin{array}{ccc}{\ell_{1}} & {\ell_{2}} & {\ell_{3}} \\ {s_{1}} & {s_{2}} & {s_{3}}\end{array}\right) \left( \begin{array}{ccc}{\ell_{1}} & {\ell_{2}} & {\ell_{3}} \\ {s_{1}^{\prime}} & {s_{2}^{\prime}} & {s_{3}^{\prime}}\end{array}\right)
+\end{equation}
+where $d_{s_{i} s_{i}^{\prime}}^{\ell_{i}}$ are Wigner d-functions such that $s_{1}+s_{2}+s_{3}=s_{1}^{\prime}+s_{2}^{\prime}+s_{3}^{\prime}=0$.
+
+
+Define:
+\begin{equation}
+H(l_{1},l_{2},l_{3})=\left[-l_{1}(l_{1}+1)+l_{2}(l_{2}+1)+l_{3}(l_{3}+1)\right]\sqrt{\frac{(2 l_{1}+1)(2 l_{2}+1)\left(2 l_{3}+1\right)}{16 \pi}}
+\end{equation}
+
+so
+\begin{equation}
+_{s_{a}} F_{l_{1} l_{2} l_{3}}{_{s_{b}} F_{l_{1} l_{2} l_{3}}}=H(l_{1},l_{2},l_{3})^2{\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{a} } & {0} & {-s_{a}}\end{array}\right)}{\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{b} } & {0} & {-s_{b}}\end{array}\right)}
+\end{equation}
+
+we also know:
+\begin{equation}
+\left( \begin{array}{ccc}{l_{3}} & {l_{2}} & {l_{1}} \\ {s_{a}} & {0} & {-s_{a}}\end{array}\right)=\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{a}} & {0} & {-s_{a}}\end{array}\right)
+\end{equation}
+
+therefore:
+\begin{equation}
+_{s_{a}} F_{l_{1} l_{2} l_{3}}{_{s_{b}} F_{l_{3} l_{2} l_{1}}}=H(l_{1},l_{2},l_{3})H(l_{3},l_{2},l_{1}){\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{a} } & {0} & {-s_{a}}\end{array}\right)}{\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{b} } & {0} & {-s_{b}}\end{array}\right)}
+\end{equation}
+
+
+\begin{equation}
+{\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{a} } & {0} & {-s_{a}}\end{array}\right)}{\left( \begin{array}{ccc}{l_{1}} & {l_{2}} & {l_{3}} \\ {s_{b} } & {0} & {-s_{b}}\end{array}\right)}=\frac{1}{2}\int_{-1}^{1} d(\cos \theta) d_{s_{a} s_{b}}^{\ell_{1}}(\theta) d_{0 0}^{\ell_{2}}(\theta) d_{\mathrm{s}_{b} s_{b}o}^{\ell_{3}}(\theta)
+\end{equation}
+
+the integral above is what we need to calculate using the Gauss-Legendre quadrature.
+
+
+
+
+
+\begin{equation}
+\begin{split}
+a& =b+c-d\\
+ & \quad +e-f\\
+ & =g+h\\
+ & =i
+\end{split}
+\end{equation}
+% Emacs 25.2.2 (Org mode 8.2.10)
+\end{document}

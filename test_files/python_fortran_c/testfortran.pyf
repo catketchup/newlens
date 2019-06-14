@@ -1,0 +1,16 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module testfortran ! in 
+    interface  ! in :testfortran
+        subroutine addsub(a,b,c,d) ! in :testfortran:testfortran.f90
+            double precision intent(in) :: a
+            double precision intent(in) :: b
+            double precision intent(out) :: c
+            double precision intent(out) :: d
+        end subroutine addsub
+    end interface 
+end python module testfortran
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

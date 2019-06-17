@@ -136,7 +136,9 @@ class Zeta:
         return cwignerd.wignerd_cf_from_cl(self.s1, self.s2, 1, self.npoints, lmax, self.zvec, self.zeta_factor())
 
 
-Test = Zeta(1, 1, 100)
-print(Test.zeta_factor())
-plt.plot(Test.zeta_factor())
+Test1 = Zeta(1, 1, 100)
+Test2 = Zeta(0, 1, 100)
+
+plt.plot(Test1.zvec, Test1.zeta_factor())
+plt.plot(Test2.zvec, Test2.zeta_factor())
 plt.show()

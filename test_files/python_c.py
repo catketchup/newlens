@@ -19,4 +19,4 @@ s1 = 0
 s2 = 0
 lmax = 100
 cl = 1
-return (cwignerd.wignerd_cf_from_cl(s1, s2, 1, npoints, lmax, zvec, cl))
+print(cwignerd.wignerd_cf_from_cl(s1, s2, 1, npoints, lmax, zvec, cl))

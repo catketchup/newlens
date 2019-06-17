@@ -1,0 +1,15 @@
+\begin{equation}
+cl[l] = \int_{x} cf(x) d^l_{s1 s2}(x)\sum_{j} cf[j] d^l_{s1 s2}[self.zvec[j]] * self.wvec[j]
+\end{equation}
+
+\begin{equation}
+cf[j] = \sum_{l} cl[l] d^l_{s1 s2}(self.zvec[j])
+\end{equation}
+
+\begin{equation}
+C_l -> sum_l C_l d^l_{ss'}(theta)
+\end{equation}
+
+\begin{equation}
+R(L) = 1/2 \int{d^2 l_X} \int{d_2 l_Y}W^{XY} W^{ZA} fX(l_X) fY(l_Y)
+\end{equation}

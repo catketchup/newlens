@@ -50,57 +50,9 @@ class Norm:
 
 
 TT_NORM = Norm(2, 4, 6, 0, 1, 1)
-print(TT_NORM.H_func())
-print(TT_NORM.F_func_1())
-print(TT_NORM.f_TT())
-
-
-class Call_Wignerd:
-    def __init__(self, npoints):
-        self.npoints = npoints
-        self.zvec, self.wvec = cwignerd.init_gauss_legendre_quadrature(npoints)
-
-    def cf_from_cl(self, s1, s2, cl):
-
-        lmax = len(cl)-1
-        return cwignerd.wignerd_cf_from_cl(s1, s2, 1, self.npoints, lmax, self.zvec, cl)
-
-# I need to define the cl which is the factor before the wigner-d function defined in the (46)(47)(48). cl should include the lensed information given by the camp
-
-
-#Value = Call_Wignerd(100)
-#s1 = 2
-#s2 = 2
-#cl = np.linspace(0, 1, 20)
-#print(Value.cf_from_cl(s1, s2, cl))
-#plt.plot(Value.zvec, Value.cf_from_cl(s1, s2, cl))
-# plt.show()
-
-
-class Zeta_factor:
-    def __init__(self, s1, s2):
-        self.s1 = s1
-        self.s2 = s2
-
-    def lensed_cl(self):
-        """ should return different functions of lensed_cl depending on s1 and s2 """
-        return np.linspace(0, 1, 100)
-
-    def factor_of_zeta(self):
-        if (self.s1 == 0) & (self.s2 == 0):
-            return 1
-        if (self.s1 == 0) & (self.s2 == 1):
-            return 2
-        if (self.s1 == 0) & (self.s2 == -1):
-            return 3
-        if (self.s1 == 1) & (self.s2 == 1):
-            return 4
-        if (self.s1 == 1) & (self.s2 == -1):
-            return 5
-
-
-Factor = Zeta_factor(0, 0)
-print(Factor.factor_of_zeta())
+# print(TT_NORM.H_func())
+# print(TT_NORM.F_func_1())
+# print(TT_NORM.f_TT())
 
 
 class Zeta:
@@ -129,6 +81,8 @@ class Zeta:
             return self.lensed_cl()
         if (self.s1 == 1) & (self.s2 == -1):
             return self.lensed_cl()
+        if (self.s1 == -1) & (self.s2 == -1):
+            return self.lensed_cl()
 
     def zeta_function(self):
 
@@ -136,9 +90,20 @@ class Zeta:
         return cwignerd.wignerd_cf_from_cl(self.s1, self.s2, 1, self.npoints, lmax, self.zvec, self.zeta_factor())
 
 
-Test1 = Zeta(1, 1, 100)
-Test2 = Zeta(0, 1, 100)
-
-plt.plot(Test1.zvec, Test1.zeta_factor())
-plt.plot(Test2.zvec, Test2.zeta_factor())
+Test1 = Zeta(0, 1, 100)
+Test2 = Zeta(-1, -1, 100)
+#plt.plot(Test1.zvec, Test1.zeta_function())
+#plt.plot(Test2.zvec, Test2.zeta_function())
+# plt.show()
+# print(Test1.zvec)
+#x = np.linspace(-1, 1, 100)
+#plt.plot(x, 1/(np.sqrt(1-np.square(x))))
+#plt.plot(x, np.arccos(x))
+# plt.hist(Test1.zvec)
+# plt.show()
+#plt.hist(Test1.wvec, bins=20)
+# plt.show()
+print(Test1.zvec)
+plt.plot(Test1.zvec, Test1.zeta_function())
+plt.plot(Test2.zvec, Test2.zeta_function())
 plt.show()

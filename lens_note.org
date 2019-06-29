@@ -1,0 +1,14 @@
+
+- temperature noise level
+- arcmin
+- transfer function
+- noise spectra
+- signal spectra
+- noise + signal spectra
+- filter functions
+- mask
+
+
+questions:
+- how polarization of the CMB radiation probe to detect the primodial gravitational waves?
+- the primodial gravitational waves?

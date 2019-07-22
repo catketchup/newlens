@@ -1,0 +1,17 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import draft0
+import cwignerd
+
+ell, unlensed_ClTT = np.loadtxt(
+    "planck_lensing_wp_highL_bestFit_20130627_scalCls.dat", usecols=(0, 1), unpack=True)
+plt.plot(ell, unlensed_ClTT)
+
+
+ell, lensed_ClTT = np.loadtxt(
+    "planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat", usecols=(0, 1), unpack=True)
+plt.plot(ell, lensed_ClTT)
+plt.xlabel('$\ell$')
+plt.ylabel('$C_{\ell}$ [$\mu$K$^ 2$]')
+plt.show()

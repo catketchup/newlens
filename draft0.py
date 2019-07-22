@@ -65,10 +65,10 @@ class Zeta:
 
     def lensed_cl(self):
         """ should return different functions of lensed_cl depending on s1 and s2 """
-        return np.linspace(0, 1, 100)
+        return np.linspace(0, 100, 100)
 
     def unlensed_cl(self):
-        return np.linspace(0, 1, 100)
+        return np.linspace(0, 100, 100)
 
     def zeta_factor(self):
         if (self.s1 == 0) & (self.s2 == 0):
@@ -104,6 +104,7 @@ Test2 = Zeta(-1, -1, 100)
 #plt.hist(Test1.wvec, bins=20)
 # plt.show()
 print(Test1.zvec)
-plt.plot(Test1.zvec, Test1.zeta_function())
-plt.plot(Test2.zvec, Test2.zeta_function())
+#plt.plot(Test1.zvec, Test1.zeta_function())
+#plt.plot(Test2.zvec, Test2.zeta_function())
+plt.hist(Test1.zvec)
 plt.show()

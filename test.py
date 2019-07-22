@@ -1,3 +1,4 @@
+import sys
 from sympy import Symbol
 import numpy as np
 from sympy.physics.wigner import wigner_3j
@@ -142,3 +143,30 @@ L = Logic(10)
 print(L > 10)
 print(L != 10)
 print(L == 10)
+
+# test manipulation of np.array
+flt = np.zeros(5)
+cltt = [1, 2, 3, 4, 5]
+cltt = np.array(cltt)
+print(flt)
+print(cltt[2:])
+print(1./cltt[2:])
+
+# test comment box, mark the words you want to comment and choose comment box
+
+###############
+# comment box #
+###############
+
+
+# test import camb
+camb.__file__
+
+
+# test lambda function
+def fun(x):
+    return lambda a: a+x
+
+
+x = fun(10)
+x(2)

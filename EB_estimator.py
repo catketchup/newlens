@@ -36,12 +36,14 @@ class unlensed:
     def spectra(self):
         if self.estimator == 'TT':
             array = np.loadtxt(
-                'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat', unpack=True)
-            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin), 1]])
+                'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
+            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
         if self.estimator == 'EE':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_scalCls.dat', unpack=True)
+            array = np.loadtxt(
+                'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
+            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
         if self.estimator == 'BB':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_scalCls.dat', unpack=True)
+            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
 
 
 lmin = 2
@@ -53,13 +55,15 @@ class lensed:
 
     def spectra(self):
         if self.estimator == 'TT':
-            return np.loadtxt(
-                'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat', unpack=True)
+
+            array = np.loadtxt(
+                'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
+            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
 
         if self.estimator == 'EE':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat', unpack=True)
+            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
         if self.estimator == 'BB':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat', unpack=True)
+            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
 
 
 # how to construct the factors?
@@ -71,30 +75,30 @@ class TT:
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
 
     def zeta_00(self):
-        cl_00 = np.zeros(lmax+1)
-        for ell in range(0, lmax+1):
-            cl_00 = (2*ell+1)/(4*np.pi)*(1./(lensed('TT').spectra()+nltt))
+        cl_00 = np.zeros(lmax+1, dtype=np.complex)
+        for ell in range(lmin, lmax+1):
+            cl_00[ell] = (2*ell+1)/(4*np.pi)*(1./(lensed('TT').spectra()+nltt))
         return self.zeta.cf_from_cl(0, 0, cl_00)
 
     def zeta_01(self):
-        cl_01 = np.zeros(lmax+1)
+        cl_01 = np.zeros(lmax+1, dtype=np.complex)
         for ell in range(0, lmax+1):
-            cl_01 = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
+            cl_01[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
                 (unlensed('TT').spectra()/lensed('TT').spectra()+nltt)
         return self.zeta.cf_from_cl(0, 1, cl_01)
 
     def zeta_0n1(self):
-        cl_0n1 = np.zeros(lmax+1)
+        cl_0n1 = np.zeros(lmax+1, dtype=np.complex)
         for ell in range(0, lmax+1):
-            cl_0n1 = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
+            cl_0n1[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
                 (unlensed('TT').spectra()/lensed('TT').spectra()+nltt)
 
         return self.zeta.cf_from_cl(0, -1, cl_0n1)
 
     def zeta_11(self):
-        cl_11 = np.zeros(lmax+1)
+        cl_11 = np.zeros(lmax+1, dtype=np.complex)
         for ell in range(0, lmax+1):
-            cl_11 = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
+            cl_11[ell] = (2 * ell+1)/(4*np.pi)*ell*(ell+1) * \
                 (np.square(unlensed('TT').spectra())/(lensed('TT').spectra()+nltt))
         return self.zeta.cf_from_cl(1, 1, cl_11)
 
@@ -106,7 +110,7 @@ class TT:
         return self.zeta.cf_from_cl(1, -1, cl_1n1)
 
     def noise(self):
-        ret = np.zeros(lmax+1)
+        ret = np.zeros(lmax+1, dtype=np.complex)
         clL = self.zeta.cl_from_cf(lmax, -
                                    1, -1, self.zeta_00()*self.zeta_11() - self.zeta_01()*self.zeta_01()) + self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_00()*self.zeta_1n1() - self.zeta_01()*self.zeta_0n1())
 
@@ -115,30 +119,11 @@ class TT:
         return 1./ret
 
 
-if 0:
-    plt.plot(ls, TT().noise())
-    plt.show()
+if 1:
+    print(lensed('TT').spectra())
+    print(len(nltt))
+    print(len(lensed('TT').spectra()))
 
-if 0:
-    plt.plot(nltt)
-    plt.show()
-
-if 0:
-    test = TT().zeta_00()
-    print(test)
-    plt.plot(test)
-    plt.xscale('log')
-    plt.ylabel('log')
-    plt.show()
-
-if 0:
-    print(len(unlensed('TT').spectra()))
-    print(unlensed('TT').spectra())
-    print(type(bl))
-    print(len(bl))
 
 if 1:
-    array = np.loadtxt(
-        'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
-    print(array[0: (lmax-lmin+1), 1])
-    print(len(array[0:(lmax-lmin+1), 1]))
+    print(TT().zeta_00())

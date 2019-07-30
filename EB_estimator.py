@@ -73,57 +73,86 @@ class lensed:
 class TT:
     def __init__(self):
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
+        self.array1 = unlensed('TT').spectra()
+        self.array2 = lensed('TT').spectra()+nltt
 
     def zeta_00(self):
-        cl_00 = np.zeros(lmax+1, dtype=np.complex)
+        cl_00 = np.zeros(lmax+1, dtype=float)
         for ell in range(lmin, lmax+1):
-            cl_00[ell] = (2*ell+1)/(4*np.pi)*(1./(lensed('TT').spectra()+nltt))
+            cl_00[ell] = (2*ell+1)/(4*np.pi)*(1./self.array1[ell])
         return self.zeta.cf_from_cl(0, 0, cl_00)
 
     def zeta_01(self):
-        cl_01 = np.zeros(lmax+1, dtype=np.complex)
+        cl_01 = np.zeros(lmax+1, dtype=float)
         for ell in range(0, lmax+1):
             cl_01[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
-                (unlensed('TT').spectra()/lensed('TT').spectra()+nltt)
+                (self.array1[ell]/self.array2[ell])
         return self.zeta.cf_from_cl(0, 1, cl_01)
 
     def zeta_0n1(self):
-        cl_0n1 = np.zeros(lmax+1, dtype=np.complex)
+        cl_0n1 = np.zeros(lmax+1, dtype=np.float)
         for ell in range(0, lmax+1):
             cl_0n1[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
-                (unlensed('TT').spectra()/lensed('TT').spectra()+nltt)
-
+                (self.array1[ell] / self.array2[ell])
         return self.zeta.cf_from_cl(0, -1, cl_0n1)
 
     def zeta_11(self):
-        cl_11 = np.zeros(lmax+1, dtype=np.complex)
+        cl_11 = np.zeros(lmax+1, dtype=np.float)
         for ell in range(0, lmax+1):
             cl_11[ell] = (2 * ell+1)/(4*np.pi)*ell*(ell+1) * \
-                (np.square(unlensed('TT').spectra())/(lensed('TT').spectra()+nltt))
+                (np.square(self.array1[ell])/(self.array2[ell]))
         return self.zeta.cf_from_cl(1, 1, cl_11)
 
     def zeta_1n1(self):
         cl_1n1 = np.zeros(lmax+1)
         for ell in range(0, lmax+1):
-            cl_1n1 = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
-                (np.square(unlensed('TT').spectra())/(lensed('TT').spectra()+nltt))
+            cl_1n1[ell] = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
+                (np.square(self.array1[ell])/(self.array2[ell]))
         return self.zeta.cf_from_cl(1, -1, cl_1n1)
 
     def noise(self):
-        ret = np.zeros(lmax+1, dtype=np.complex)
+        ret = np.zeros(lmax+1, dtype=np.float)
         clL = self.zeta.cl_from_cf(lmax, -
                                    1, -1, self.zeta_00()*self.zeta_11() - self.zeta_01()*self.zeta_01()) + self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_00()*self.zeta_1n1() - self.zeta_01()*self.zeta_0n1())
 
         for L in range(0, lmax+1):
-            ret[L] = np.pi*L * (L+1)*clL(L)
+            ret[L] = np.pi*L * (L+1)*clL[L]
+        ret[0] = ret[1]
         return 1./ret
 
 
-if 1:
+if 0:
     print(lensed('TT').spectra())
     print(len(nltt))
     print(len(lensed('TT').spectra()))
+    array = lensed('TT').spectra()
+    print(array[1])
 
+if 0:
+    test_00 = TT().zeta_00()
+    test_01 = TT().zeta_01()
+    test_0n1 = TT().zeta_0n1()
+    test_11 = TT().zeta_11()
+    test_1n1 = TT().zeta_1n1()
+
+
+if 0:
+    ret = np.zeros(lmax+1, dtype=float)
+    zeta = wignerd.gauss_legendre_quadrature(4501)
+    clL = zeta.cl_from_cf(lmax, -1, -1, test_00*test_01)
+    plt.plot(clL)
+    plt.show()
+    for L in range(0, lmax+1):
+        ret[L] = (np.pi)*L*(L+1)*clL[L]
+    plt.plot(ls, clL)
+    plt.show()
+    print('done')
 
 if 1:
-    print(TT().zeta_00())
+    result = TT().noise()
+    def t(ell): return (ell*(ell+1.))
+    print(t(ls)*result)
+    plt.plot(ls[1:3001], (t(ls) * result)[1:3001])
+    plt.show()
+    plt.yscale('log')
+    print('done')

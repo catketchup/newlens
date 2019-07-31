@@ -6,6 +6,7 @@ import ipdb
 
 # calculate the EB estimator using my new result as a demon
 lmax = 3000
+lmin = 2
 ls = np.arange(0, lmax+1)
 nlev_t = 5  # temperature noise level, in uk.arcmin
 nlev_p = 5
@@ -32,42 +33,32 @@ nlee = nlbb = (np.pi/180./60.*nlev_p)**2 / bl**2
 class unlensed:
     def __init__(self, estimator):
         self.estimator = estimator
+        self.data = np.loadtxt(
+            'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
 
     def spectra(self):
         if self.estimator == 'TT':
-            array = np.loadtxt(
-                'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
-            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 1]])
+
         if self.estimator == 'EE':
-            array = np.loadtxt(
-                'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
-            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
-        if self.estimator == 'BB':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
-
-
-lmin = 2
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]])
 
 
 class lensed:
     def __init__(self, estimator):
         self.estimator = estimator
+        self.data = np.loadtxt(
+            'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
 
     def spectra(self):
         if self.estimator == 'TT':
-
-            array = np.loadtxt(
-                'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
-            return np.concatenate([np.zeros(lmin), array[0: (lmax-lmin+1), 1]])
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 1]])
 
         if self.estimator == 'EE':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]])
+
         if self.estimator == 'BB':
-            return np.loadtxt('planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
-
-
-# how to construct the factors?
-# construct Zeta(0,0)
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 3]])
 
 
 class TT:
@@ -121,38 +112,101 @@ class TT:
         return 1./ret
 
 
-if 0:
-    print(lensed('TT').spectra())
-    print(len(nltt))
-    print(len(lensed('TT').spectra()))
-    array = lensed('TT').spectra()
-    print(array[1])
+class EB:
+    def __init__(self):
+        self.zeta = wignerd.gauss_legendre_quadrature(4501)
+        self.array1 = unlensed('EE').spectra()
+        self.array2 = lensed('EE').spectra()+nltt
+        self.array3 = lensed('BB').spectra()+nlbb
 
-if 0:
-    test_00 = TT().zeta_00()
-    test_01 = TT().zeta_01()
-    test_0n1 = TT().zeta_0n1()
-    test_11 = TT().zeta_11()
-    test_1n1 = TT().zeta_1n1()
+    def zeta_33(self):
+        cl_33 = np.zeros(lmax+1, dtype=float)
+        for ell in range(lmin, lmax+1):
+            cl_33[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-2)*(ell+3)
+        return self.zeta.cf_from_cl(3, 3, cl_33)
+
+    def zeta_3n3(self):
+        cl_3n3 = np.zeros(lmax+1, dtype=float)
+        for ell in range(0, lmax+1):
+            cl_3n3[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-2)*(ell+3)
+            (self.array1[ell]/self.array2[ell])
+        return self.zeta.cf_from_cl(3, -3, cl_3n3)
+
+    def zeta_31(self):
+        cl_31 = np.zeros(lmax+1, dtype=np.float)
+        for ell in range(0, lmax+1):
+            cl_31[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell]
+                 )*np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
+            (self.array1[ell]/self.array2[ell])
+        return self.zeta.cf_from_cl(3, 1, cl_31)
+
+    def zeta_3n1(self):
+        cl_3n1 = np.zeros(lmax+1, dtype=np.float)
+        for ell in range(0, lmax+1):
+            cl_3n1[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell]
+                 )*np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
+            (self.array1[ell]/self.array2[ell])
+        return self.zeta.cf_from_cl(3, -1, cl_3n1)
+
+    def zeta_11(self):
+        cl_11 = np.zeros(lmax+1, dtype=float)
+        for ell in range(lmin, lmax+1):
+            cl_11[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-1)*(ell+2)
+        return self.zeta.cf_from_cl(1, 1, cl_11)
+
+    def zeta_1n1(self):
+        cl_1n1 = np.zeros(lmax+1, dtype=float)
+        for ell in range(lmin, lmax+1):
+            cl_1n1[ell] = (2*ell+1)/(4*np.pi) * \
+                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-1)*(ell+2)
+        return self.zeta.cf_from_cl(1, -1, cl_1n1)
+
+    def zeta_22(self):
+        cl_22 = np.zeros(lmax+1)
+        for ell in range(0, lmax+1):
+            cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
+        return self.zeta.cf_from_cl(2, 2, cl_22)
+
+    def zeta_2n2(self):
+        cl_22 = np.zeros(lmax+1)
+        for ell in range(0, lmax+1):
+            cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
+        return self.zeta.cf_from_cl(2, -2, cl_22)
+
+    def noise(self):
+        ret = np.zeros(lmax+1, dtype=np.float)
+        clL = self.zeta.cl_from_cf(lmax, 1, 1, self.zeta_33()*self.zeta_22() - 2*self.zeta_3n1()*self.zeta_2n2()+self.zeta_11(
+        )*self.zeta_22()) - self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_3n3()*self.zeta_2n2() - 2*self.zeta_31()*self.zeta_22()+self.zeta_1n1()*self.zeta_2n2())
+
+        for L in range(0, lmax+1):
+            ret[L] = (np.pi/4.)*L * (L+1)*clL[L]
+        ret[0] = ret[1]
+        return 1./ret
 
 
-if 0:
-    ret = np.zeros(lmax+1, dtype=float)
-    zeta = wignerd.gauss_legendre_quadrature(4501)
-    clL = zeta.cl_from_cf(lmax, -1, -1, test_00*test_01)
-    plt.plot(clL)
-    plt.show()
-    for L in range(0, lmax+1):
-        ret[L] = (np.pi)*L*(L+1)*clL[L]
-    plt.plot(ls, clL)
-    plt.show()
-    print('done')
+def t(ell): return (ell*(ell+1.))
+
 
 if 1:
-    result = TT().noise()
-    def t(ell): return (ell*(ell+1.))
-    print(t(ls)*result)
-    plt.plot(ls[1:3001], (t(ls) * result)[1:3001])
+    result1 = TT().noise()
+    result2 = EB().noise()
+    plt.plot(ls[1:3001], (t(ls)*result1)[1:3001])
+    plt.plot(ls[1:3001], (t(ls)*result2)[1:3001])
+    plt.show()
+    plt.yscale('log')
+    print('done')
+
+
+if 0:
+    result1 = TT().noise()
+    result2 = EB().noise()
+    plt.plot(ls[1:3001], (t(ls)*t(ls)*result1)[1:3001])
+    plt.plot(ls[1:3001], (t(ls)*t(ls)*result2)[1:3001])
     plt.show()
     plt.yscale('log')
     print('done')

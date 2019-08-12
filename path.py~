@@ -1,0 +1,7 @@
+def file(datatype):
+    data_path = './data/'
+    if datatype == 'unlensed':
+        return data_path+'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat'
+
+    if datatype == 'lensed':
+        return data_path+'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat'

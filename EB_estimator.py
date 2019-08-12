@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cwignerd
 import wignerd
 import ipdb
+import path
 
 # calculate the EB estimator using my new result as a demon
 lmax = 3000
@@ -28,13 +29,13 @@ bl = bl(beam_fwhm, lmax)
 # bl is transfer functions
 nltt = (np.pi/180./60.*nlev_t)**2 / bl**2
 nlee = nlbb = (np.pi/180./60.*nlev_p)**2 / bl**2
+data_version = 1
 
 
 class unlensed:
     def __init__(self, estimator):
         self.estimator = estimator
-        self.data = np.loadtxt(
-            'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat')
+        self.data = np.loadtxt(path.file(data_version, 'unlensed').file_data())
 
     def spectra(self):
         if self.estimator == 'TT':
@@ -47,8 +48,7 @@ class unlensed:
 class lensed:
     def __init__(self, estimator):
         self.estimator = estimator
-        self.data = np.loadtxt(
-            'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat')
+        self.data = np.loadtxt(path.file(data_version, 'lensed').file_data())
 
     def spectra(self):
         if self.estimator == 'TT':
@@ -110,6 +110,14 @@ class TT:
             ret[L] = np.pi*L * (L+1)*clL[L]
         ret[0] = ret[1]
         return 1./ret
+
+
+class EE:
+    def __init__(self):
+        self.zeta = wignerd.gauss_legendre_quadrature(4501)
+        self.array1 = unlensed('EE').spectra()
+        self.array2 = lensed('EE').spectra()+nltt
+        self.array3 = lensed('BB').spectra()+nlbb
 
 
 class EB:
@@ -192,7 +200,7 @@ class EB:
 def t(ell): return (ell*(ell+1.))
 
 
-if 1:
+if 0:
     result1 = TT().noise()
     result2 = EB().noise()
     plt.plot(ls[1:3001], (t(ls)*result1)[1:3001])
@@ -202,11 +210,15 @@ if 1:
     print('done')
 
 
-if 0:
+if 1:
     result1 = TT().noise()
     result2 = EB().noise()
-    plt.plot(ls[1:3001], (t(ls)*t(ls)*result1)[1:3001])
-    plt.plot(ls[1:3001], (t(ls)*t(ls)*result2)[1:3001])
-    plt.show()
+    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)[2:2000]/(2*np.pi))
+    plt.plot(ls[2:2000], (t(ls)*t(ls)*result2)[2:2000]/(2*np.pi))
+    plt.legend(['TT', 'EB'])
+    plt.xscale('log')
     plt.yscale('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
     print('done')

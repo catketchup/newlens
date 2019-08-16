@@ -11,7 +11,7 @@ lmin = 2
 ls = np.arange(0, lmax+1)
 nlev_t = 5  # temperature noise level, in uk.arcmin
 nlev_p = 5
-beam_fwhm = 1
+beam_fwhm = 10
 
 
 def bl(fwhm_arcmin, lmax):

@@ -1,0 +1,240 @@
+
+test/concatenate.py,248
+lmin = 2lmin3,20
+lmax = 3000lmax4,29
+tfname = '../planck_lensing_wp_highL_bestFit_20130627_scalCls.dat'tfname5,41
+tarray = np.loadtxt(tfname)tarray6,108
+newarray = np.concatenate([np.zeros(lmin), tarray[0:(lmax-lmin+1), 1]])newarray8,137
+
+test/test.py,1485
+class Call_Wignerd:Call_Wignerd12,271
+    def __init__(self, s1, s2, npoints):__init__13,291
+    def array(self):array19,486
+    def cf_from_cl(self):cf_from_cl22,546
+test = Call_Wignerd(0, 1, 100)test28,719
+class call:call35,849
+    def __init__(self, s1, s2):__init__36,861
+    def add(self):add40,936
+def Func(call_1):  # attention, the name of the argument is not important, as long as the class put in later has the function called in this functionFunc44,988
+new = call(1, 1)new48,1164
+def add(a, b):add55,1213
+class Num:Num69,1436
+    def __init__(self, math):__init__70,1447
+    def __str__(self):__str__73,1503
+    def __add__(self, other):__add__77,1595
+    def __radd__(self, other):__radd__81,1697
+    def __iadd__(self, other):__iadd__85,1810
+n = Num(12)n89,1881
+m = n+10m91,1894
+class Temp:Temp98,1939
+    def __init__(self, math):__init__99,1951
+    def __str__(self):__str__102,2007
+x = Temp(1)x106,2062
+class Logic:Logic113,2116
+    def __init__(self, a):__init__114,2129
+    def __gt__(self, other):__gt__118,2193
+    def __lt__(self, other):__lt__122,2266
+    def __eq__(self, other):__eq__126,2399
+    def __ge__(self, other):__ge__130,2479
+    def __le__(self, other):__le__134,2559
+    def __ne__(self, other):__ne__138,2645
+L = Logic(10)L142,2707
+flt = np.zeros(5)flt148,2798
+cltt = [1, 2, 3, 4, 5]cltt149,2816
+cltt = np.array(cltt)cltt150,2839
+def fun(x):fun167,3095
+x = fun(10)x171,3134
+
+wignerd.c,1041
+void init_gauss_legendre_quadrature(int n, double *x, double *w)init_gauss_legendre_quadrature13,279
+static inline double alpha(int l, int s1, int s2)alpha46,1163
+static inline int wiginit(int s1, int s2, int ntheta, const double *cos_theta, double *out)wiginit59,1431
+static inline void wigrec(int l, int s1, int s2, int ntheta, const double *cos_theta, double *wigd_hi, double *wigd_lo)wigrec94,2173
+static void cf_accum(int l, int nfunc, int ntheta, int lmax, const double *wigd, double *out_cf, const double *in_cl)cf_accum111,2715
+void wignerd_cf_from_cl(int s1, int s2, int nfunc, int ntheta, int lmax, const double *cos_theta, double *out_cf, const double *in_cl)wignerd_cf_from_cl134,3241
+static void cl_fill(int l, int nfunc, int ntheta, int lmax, const double *wigd, double *out_cl, const double *in_cf)cl_fill160,3979
+void wignerd_cl_from_cf(int s1, int s2, int nfunc, int ntheta, int lmax, const double *cos_theta, const double *integration_weights, double *out_cl, const double *in_cf)wignerd_cl_from_cf184,4619
+
+test_wignerd.py,178
+def factor(l1, L, l2):factor5,64
+def factor1(l1, s):factor19,150
+def factor2(l1, s):factor213,208
+def left(l1, L, l2, s):left17,266
+def right(l1, L, l2, s):right22,335
+
+load_data.py,70
+def unlensed_ClEE():unlensed_ClEE8,103
+x = unlensed_ClEE()x15,256
+
+EB_estimator.py,1529
+lmax = 3000lmax9,167
+lmin = 2lmin10,179
+ls = np.arange(0, lmax+1)ls11,188
+nlev_t = 5  # temperature noise level, in uk.arcminnlev_t12,214
+nlev_p = 5nlev_p13,266
+beam_fwhm = 1beam_fwhm14,277
+def bl(fwhm_arcmin, lmax):bl17,293
+bl = bl(beam_fwhm, lmax)bl26,654
+nltt = (np.pi/180./60.*nlev_t)**2 / bl**2nltt30,723
+data_version = 1data_version32,814
+class unlensed:unlensed35,833
+    def __init__(self, estimator):__init__36,849
+    def spectra(self):spectra40,1000
+class lensed:lensed48,1264
+    def __init__(self, estimator):__init__49,1278
+    def spectra(self):spectra53,1427
+class TT:TT64,1811
+    def __init__(self):__init__65,1821
+    def zeta_00(self):zeta_0070,2003
+    def zeta_01(self):zeta_0176,2229
+    def zeta_0n1(self):zeta_0n183,2507
+    def zeta_11(self):zeta_1190,2795
+    def zeta_1n1(self):zeta_1n197,3082
+    def noise(self):noise104,3356
+class EE:EE115,3801
+    def __init__(self):__init__116,3811
+class EB:EB123,4044
+    def __init__(self):__init__124,4054
+    def zeta_33(self):zeta_33130,4286
+    def zeta_3n3(self):zeta_3n3137,4571
+    def zeta_31(self):zeta_31145,4906
+    def zeta_3n1(self):zeta_3n1154,5282
+    def zeta_11(self):zeta_11163,5663
+    def zeta_1n1(self):zeta_1n1170,5948
+    def zeta_22(self):zeta_22177,6238
+    def zeta_2n2(self):zeta_2n2183,6448
+    def noise(self):noise189,6660
+def t(ell): return (ell*(ell+1.))t200,7149
+    result1 = TT().noise()result1214,7408
+    result2 = EB().noise()result2215,7435
+
+test_files/draft0.py,268
+class Norm:Norm7,124
+    def __init__(self, *args):__init__10,199
+    def H_func(self):H_func18,418
+    def F_func_2(self):F_func_227,687
+    def F_func_1(self):F_func_135,946
+    def f_TT(self):f_TT44,1206
+TT_NORM = Norm(2, 4, 6, 0, 1, 1)TT_NORM49,1366
+
+test_files/python_fortran_c/testfortran.f90,37
+      SUBROUTINE ADDSUB(ADDSUB2,20
+
+test_files/python_fortran_c/py_routine.py,255
+class Call_Wignerd:Call_Wignerd12,175
+    def __init__(self, npoints):__init__13,195
+    def cf_from_cl(self, s1, s2, cl):cf_from_cl17,340
+Value = Call_Wignerd(100)Value25,629
+s1 = 2s126,655
+s2 = 2s227,662
+cl = np.linspace(0, 1, 20)cl28,669
+
+test_files/python_fortran_c/wignerd.c,1041
+void init_gauss_legendre_quadrature(int n, double *x, double *w)init_gauss_legendre_quadrature13,279
+static inline double alpha(int l, int s1, int s2)alpha46,1163
+static inline int wiginit(int s1, int s2, int ntheta, const double *cos_theta, double *out)wiginit59,1431
+static inline void wigrec(int l, int s1, int s2, int ntheta, const double *cos_theta, double *wigd_hi, double *wigd_lo)wigrec94,2173
+static void cf_accum(int l, int nfunc, int ntheta, int lmax, const double *wigd, double *out_cf, const double *in_cl)cf_accum111,2715
+void wignerd_cf_from_cl(int s1, int s2, int nfunc, int ntheta, int lmax, const double *cos_theta, double *out_cf, const double *in_cl)wignerd_cf_from_cl134,3241
+static void cl_fill(int l, int nfunc, int ntheta, int lmax, const double *wigd, double *out_cl, const double *in_cf)cl_fill160,3979
+void wignerd_cl_from_cf(int s1, int s2, int nfunc, int ntheta, int lmax, const double *cos_theta, const double *integration_weights, double *out_cl, const double *in_cf)wignerd_cl_from_cf184,4619
+
+test_files/python_fortran_c/m.c,45
+void m(int n, double *x, double *y) {m2,17
+
+test_files/python_fortran_c/foo.f90,28
+subroutine hello hello1,0
+
+test_files/draft1.py,253
+class NormIntegral:NormIntegral7,119
+    def __init__(self, *args):__init__18,344
+    def zeta_00_T(self):zeta_00_T25,560
+    def zeta_01_T(self):zeta_01_T30,648
+    def zeta_11_T(self):zeta_11_T35,735
+Test = NormIntegral(1, 2, 3)Test40,823
+
+test_files/python_c.py,416
+adder = ctypes.cdll.LoadLibrary('./adder.so')adder3,33
+a = ctypes.c_float(5.5)a5,80
+b = ctypes.c_float(4.1)b6,104
+add_float = adder.add_floatadd_float8,129
+add_int = adder.add_intadd_int12,232
+cwignerd = ctypes.cdll.LoadLibrary('./cwignerd.so')cwignerd15,290
+npoints = 100npoints16,342
+zvec = np.linspace(-1, 1, 20)zvec17,356
+s1 = 0s118,386
+s2 = 0s219,393
+lmax = 100lmax20,400
+cl = 1cl21,411
+
+wignerd.py,233
+class gauss_legendre_quadrature:gauss_legendre_quadrature9,155
+    def __init__(self, npoints):__init__20,530
+    def cf_from_cl(self, s1, s2, cl):cf_from_cl25,835
+    def cl_from_cf(self, lmax, s1, s2, cf):cl_from_cf37,1415
+
+path.py,124
+class file:file1,0
+    def __init__(self, data_version, datatype):__init__2,12
+    def file_data(self):file_data7,170
+
+spec.py,3197
+def bl(fwhm_arcmin, lmax):bl29,1655
+def nl(noise_uK_arcmin, fwhm_arcmin, lmax):nl37,2017
+def get_camb_scalcl(fname=None, prefix=None, lmax=None):get_camb_scalcl45,2410
+def get_camb_lensedcl(fname=None, prefix=None, lmax=None):get_camb_lensedcl66,3278
+def is_camb_clfile(obj):is_camb_clfile84,4043
+class camb_clfile(object):camb_clfile92,4385
+    def __init__(self, tfname, lmax=None):__init__94,4492
+    def copy(self, lmax=None, lmin=None):copy132,6517
+    def hashdict(self):hashdict155,7352
+    def __add__(self, other):__add__163,7682
+    def __eq__(self, other):__eq__179,8339
+    def plot(self, spec='cltt', p=pl.plot, t=lambda l:1., **kwargs):plot192,8806
+def is_lcl(obj):is_lcl200,9186
+class lcl(object):lcl204,9350
+    def __init__(self, lmax, fc):__init__210,9672
+    def is_compatible(self, other):is_compatible222,10197
+    def __add__(self, other):__add__226,10409
+    def __sub__(self, other):__sub__231,10563
+    def __mul__(self, other):__mul__236,10717
+    def __div__(self, other):__div__248,11113
+    def get_ml(self, lbins, t=lambda l : 1.):get_ml260,11509
+class bcl(object):bcl279,12401
+    def __init__(self, lbins, specs):__init__285,12706
+    def __getattr__(self, spec):__getattr__291,12869
+    def __mul__(self, fac):__mul__297,13016
+    def __div__(self, other):__div__305,13176
+    def __add__(self, other):__add__318,13604
+    def __sub__(self, other):__sub__329,13956
+    def __iadd__(self, other):__iadd__340,14308
+    def get_ml(self, lbins, t=lambda l : 1.):get_ml349,14564
+    def plot(self, spec='cl', p=pl.plot, t=lambda l:1., **kwargs):plot357,14870
+def is_cl(obj):is_cl365,15306
+class clvec(object):clvec371,15500
+    def __init__(self, clvec):__init__373,15680
+    def clone(self, lmax=None):clone377,15780
+    def __add__(self, other):__add__387,16085
+    def __mul__(self, other):__mul__400,16647
+            def fftxcl(fft, cl):fftxcl413,17144
+    def inverse(self):inverse421,17428
+    def cholesky(self):cholesky427,17702
+def is_clmat_teb(obj):is_clmat_teb431,17838
+class clmat_teb(object):clmat_teb437,18059
+    def __init__(self, cl):__init__439,18276
+    def hashdict(self):hashdict456,19082
+    def compatible(self, other):compatible461,19318
+    def clone(self, lmax=None):clone467,19617
+    def __add__(self, other):__add__475,19837
+    def __mul__(self, other):__mul__494,20651
+            def fftxcl(fft, cl):fftxcl522,21582
+    def inverse(self):inverse533,22253
+    def cholesky(self):cholesky540,22559
+class blmat_teb(clmat_teb):blmat_teb548,22952
+    def __init__(self, bl):__init__551,23165
+def rcfft2cl( lbins, r1, r2=None, t=None, psimin=0., psimax=np.inf, psispin=1 ):rcfft2cl557,23486
+def tebfft2cl( lbins, teb1, teb2=None, t=None,  psimin=0., psimax=np.inf, psispin=1  ):tebfft2cl599,25188
+def cross_cl( lbins, r1, r2=None, w=None , t=None):cross_cl647,27646
+def cl2cfft(cl, pix):cl2cfft662,28153
+def cl2tebfft(cl, pix):cl2tebfft672,28593
+def plot_cfft_cl2d( cfft, cfft2=None, smth=0, lcnt=None, cm=pl.cm.jet, t = lambda l, v : np.log(np.abs(v)), axlab=True, vmin=None, vmax=None, cbar=False):plot_cfft_cl2d683,29430

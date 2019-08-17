@@ -72,47 +72,45 @@ class TT:
 
     def zeta_00(self):
         cl_00 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_00[ell] = (2*ell+1)/(4*np.pi)*(1./self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_00[ell] = (2*ell+1)/(4*np.pi)*(1./self.array2[ell])
         return self.zeta.cf_from_cl(0, 0, cl_00)
 
     def zeta_01(self):
         cl_01 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_01[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
-                (self.array1[ell]/self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_01[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
+                     (self.array1[ell]/self.array2[ell])
         return self.zeta.cf_from_cl(0, 1, cl_01)
 
     def zeta_0n1(self):
         cl_0n1 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_0n1[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
-                (self.array1[ell] / self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_0n1[ell] = (2*ell+1)/(4*np.pi)*np.sqrt(ell*(ell+1)) * \
+                      (self.array1[ell] / self.array2[ell])
         return self.zeta.cf_from_cl(0, -1, cl_0n1)
 
     def zeta_11(self):
         cl_11 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_11[ell] = (2 * ell+1)/(4*np.pi)*ell*(ell+1) * \
-                (self.array1[ell]**2)/(self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_11[ell] = (2 * ell+1)/(4*np.pi)*ell*(ell+1) * \
+                     (self.array1[ell]**2)/(self.array2[ell])
         return self.zeta.cf_from_cl(1, 1, cl_11)
 
     def zeta_1n1(self):
         cl_1n1 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_1n1[ell] = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
-                self.array1[ell]**2/(self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_1n1[ell] = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
+                      self.array1[ell]**2/(self.array2[ell])
         return self.zeta.cf_from_cl(1, -1, cl_1n1)
 
     def noise(self):
         ret = np.zeros(lmax+1, dtype=complex)
         clL = self.zeta.cl_from_cf(lmax, -1, -1, self.zeta_00()*self.zeta_11() - self.zeta_01()*self.zeta_01()) + self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_00()*self.zeta_1n1() - self.zeta_01()*self.zeta_0n1())
+        ell = np.arange(lmin, lmax+1)
 
-        for L in range(lmin, lmax+1):
-            ret[L] = np.pi*L * (L+1)*clL[L]
-        ret_f = 1./ret
-        ret_f[0] = ret_f[1] = 0
-        return ret_f
+        ret[ell] = (np.pi*ell * (ell+1)*clL[ell])**-1
+        return ret
 
 
 class EE:

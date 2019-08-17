@@ -66,9 +66,8 @@ class TT:
     def __init__(self):
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
         # self.array1 = unlensed('TT').spectra()
+        self.array1 = lensed('TT').spectra()  # to match quicklens
         self.array2 = lensed('TT').spectra()+nltt
-        self.array1 = self.array2.copy()  # temp change to allow
-                                          # direct comparison with ql
 
     def zeta_00(self):
         cl_00 = np.zeros(lmax+1, dtype=complex)

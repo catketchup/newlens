@@ -100,12 +100,13 @@ class TT:
         cl_1n1 = np.zeros(lmax+1, dtype=complex)
         ell = np.arange(lmin, lmax+1)
         cl_1n1[ell] = (2*ell+1)/(4*np.pi)*ell*(ell+1) * \
-                      self.array1[ell]**2/(self.array2[ell])
+            self.array1[ell]**2/(self.array2[ell])
         return self.zeta.cf_from_cl(1, -1, cl_1n1)
 
     def noise(self):
         ret = np.zeros(lmax+1, dtype=complex)
-        clL = self.zeta.cl_from_cf(lmax, -1, -1, self.zeta_00()*self.zeta_11() - self.zeta_01()*self.zeta_01()) + self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_00()*self.zeta_1n1() - self.zeta_01()*self.zeta_0n1())
+        clL = self.zeta.cl_from_cf(lmax, -1, -1, self.zeta_00()*self.zeta_11() - self.zeta_01()*self.zeta_01(
+        )) + self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_00()*self.zeta_1n1() - self.zeta_01()*self.zeta_0n1())
         ell = np.arange(lmin, lmax+1)
 
         ret[ell] = (np.pi*ell * (ell+1)*clL[ell])**-1
@@ -124,77 +125,80 @@ class EB:
     def __init__(self):
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
         self.array1 = unlensed('EE').spectra()
+#        self.array1 = lensed('EE').spectra()  # to match quicklens
         self.array2 = lensed('EE').spectra()+nlbb
         self.array3 = lensed('BB').spectra()+nlbb
 
     def zeta_33(self):
         cl_33 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_33[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-2)*(ell+3)
+        ell = np.arange(lmin, lmax+1)
+        cl_33[ell] = (2*ell+1)/(4*np.pi) * (self.array1[ell]
+                                            )**2/self.array2[ell]*(ell-2)*(ell+3)
+
         return self.zeta.cf_from_cl(3, 3, cl_33)
 
     def zeta_3n3(self):
         cl_3n3 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(0, lmax+1):
-            cl_3n3[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-2)*(ell+3)
-            (self.array1[ell]/self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_3n3[ell] = (2*ell+1)/(4*np.pi) * (self.array1[ell]
+                                             )**2/self.array2[ell]*(ell-2)*(ell+3)
+
         return self.zeta.cf_from_cl(3, -3, cl_3n3)
 
     def zeta_31(self):
         cl_31 = np.zeros(lmax+1, dtype=np.complex)
-        for ell in range(0, lmax+1):
-            cl_31[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell]
-                 )*np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
-            (self.array1[ell]/self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_31[ell] = (2*ell+1)/(4*np.pi) * \
+            (self.array1[ell])**2/self.array2[ell] * \
+            np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
+
         return self.zeta.cf_from_cl(3, 1, cl_31)
 
     def zeta_3n1(self):
         cl_3n1 = np.zeros(lmax+1, dtype=np.complex)
-        for ell in range(0, lmax+1):
-            cl_3n1[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell]
-                 )*np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
-            (self.array1[ell]/self.array2[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_3n1[ell] = (2*ell+1)/(4*np.pi) * \
+            (self.array1[ell])**2/self.array2[ell] * \
+            np.sqrt((ell-1)*(ell+2)*(ell-2)*(ell+3))
+
         return self.zeta.cf_from_cl(3, -1, cl_3n1)
 
     def zeta_11(self):
         cl_11 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_11[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-1)*(ell+2)
+        ell = np.arange(lmin, lmax+1)
+        cl_11[ell] = (2*ell+1)/(4*np.pi) * self.array1[ell]**2 / \
+            self.array2[ell]*(ell-1)*(ell+2)
+
         return self.zeta.cf_from_cl(1, 1, cl_11)
 
     def zeta_1n1(self):
         cl_1n1 = np.zeros(lmax+1, dtype=complex)
-        for ell in range(lmin, lmax+1):
-            cl_1n1[ell] = (2*ell+1)/(4*np.pi) * \
-                (np.sqrt(self.array1[ell])/self.array2[ell])*(ell-1)*(ell+2)
+        ell = np.arange(lmin, lmax+1)
+        cl_1n1[ell] = (2*ell+1)/(4*np.pi) * self.array1[ell]**2 / \
+            self.array2[ell]*(ell-1)*(ell+2)
+
         return self.zeta.cf_from_cl(1, -1, cl_1n1)
 
     def zeta_22(self):
         cl_22 = np.zeros(lmax+1)
-        for ell in range(0, lmax+1):
-            cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
         return self.zeta.cf_from_cl(2, 2, cl_22)
 
     def zeta_2n2(self):
         cl_22 = np.zeros(lmax+1)
-        for ell in range(0, lmax+1):
-            cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
+        ell = np.arange(lmin, lmax+1)
+        cl_22[ell] = (2*ell+1)/(4*np.pi)*(1./self.array3[ell])
         return self.zeta.cf_from_cl(2, -2, cl_22)
 
     def noise(self):
         ret = np.zeros(lmax+1, dtype=np.complex)
         clL = self.zeta.cl_from_cf(lmax, 1, 1, self.zeta_33()*self.zeta_22() - 2*self.zeta_3n1()*self.zeta_2n2()+self.zeta_11(
         )*self.zeta_22()) - self.zeta.cl_from_cf(lmax, 1, -1, self.zeta_3n3()*self.zeta_2n2() - 2*self.zeta_31()*self.zeta_22()+self.zeta_1n1()*self.zeta_2n2())
+        ell = np.arange(lmin, lmax+1)
 
-        for L in range(0, lmax+1):
-            ret[L] = (np.pi/4.)*L * (L+1)*clL[L]
-        ret[0] = ret[1]
-        return 1./ret
+        ret[ell] = ((np.pi/4.)*ell * (ell+1)*clL[ell])**-1
+        return ret
 
 
 def t(ell): return (ell*(ell+1.))
@@ -223,12 +227,23 @@ if 0:
     plt.show()
     print('done')
 
-
 if 1:
-    result1 = TT().noise()
-    ql_data = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], ql_data[2:2000])
-    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)[2:2000]/(2*np.pi))
+    EB_nl = t(ls)*t(ls)*EB().noise()
+    EB_ql = np.real(np.loadtxt("data/EB.dat", dtype=complex))
+    plt.plot(ls[2:2000], EB_nl[2:2000]/(2*np.pi))
+    plt.plot(ls[2:2000], EB_ql[2:2000])
+    plt.legend(['EB_nl', 'EB_ql'])
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
+
+if 0:
+    TT_nl = t(ls)*t(ls)*TT().noise()
+    TT_ql = np.real(np.loadtxt("data/TT.dat", dtype=complex))
+    plt.plot(ls[2:2000], TT_nl[2:2000]/(2*np.pi))
+    plt.plot(ls[2:2000], TT_ql[2:2000])
     plt.legend(['TT_ql', 'TT_nl'])
     plt.xscale('log')
     plt.yscale('log')
@@ -237,10 +252,11 @@ if 1:
     plt.show()
     print('done')
 
-if 1:
+if 0:
     result1 = TT().noise()
     ql_data = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)[2:2000]/(2*np.pi)/ql_data[2:2000])
+    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)
+             [2:2000]/(2*np.pi)/ql_data[2:2000])
     plt.legend('ratio')
     plt.xscale('log')
     plt.yscale('log')
@@ -248,4 +264,3 @@ if 1:
     plt.ylabel(r'quicklens / newlens')
     plt.show()
     print('done')
-    

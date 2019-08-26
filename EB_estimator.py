@@ -42,7 +42,7 @@ class unlensed:
             return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 1]/(ell*(ell+1.))*2*np.pi])
 
         if self.estimator == 'EE':
-            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]])
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]/(ell*(ell+1.))*2*np.pi])
 
 
 class lensed:
@@ -56,17 +56,17 @@ class lensed:
             return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 1]/(ell*(ell+1.))*2*np.pi])
 
         if self.estimator == 'EE':
-            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]])
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 2]/(ell*(ell+1.))*2*np.pi])
 
         if self.estimator == 'BB':
-            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 3]])
+            return np.concatenate([np.zeros(lmin), self.data[0: (lmax-lmin+1), 3]/(ell*(ell+1.))*2*np.pi])
 
 
 class TT:
     def __init__(self):
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
-        # self.array1 = unlensed('TT').spectra()
-        self.array1 = lensed('TT').spectra()  # to match quicklens
+        self.array1 = unlensed('TT').spectra()
+        # self.array1 = lensed('TT').spectra()  # to match quicklens
         self.array2 = lensed('TT').spectra()+nltt
 
     def zeta_00(self):
@@ -205,44 +205,9 @@ def t(ell): return (ell*(ell+1.))
 
 
 if 0:
-    result1 = TT().noise()
-    result2 = EB().noise()
-    plt.plot(ls[1:3001], (t(ls)*result1)[1:3001])
-    plt.plot(ls[1:3001], (t(ls)*result2)[1:3001])
-    plt.show()
-    plt.yscale('log')
-    print('done')
-
-
-if 0:
-    result1 = TT().noise()
-    result2 = EB().noise()
-    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)[2:2000]/(2*np.pi))
-    plt.plot(ls[2:2000], (t(ls)*t(ls)*result2)[2:2000]/(2*np.pi))
-    plt.legend(['TT', 'EB'])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-    print('done')
-
-if 1:
-    EB_nl = t(ls)*t(ls)*EB().noise()
-    EB_ql = np.real(np.loadtxt("data/EB.dat", dtype=complex))
-    plt.plot(ls[2:2000], EB_nl[2:2000]/(2*np.pi))
-    plt.plot(ls[2:2000], EB_ql[2:2000])
-    plt.legend(['EB_nl', 'EB_ql'])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-
-if 0:
-    TT_nl = t(ls)*t(ls)*TT().noise()
+    TT_nl = t(ls)*t(ls)*TT().noise()/(2*np.pi)
     TT_ql = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], TT_nl[2:2000]/(2*np.pi))
+    plt.plot(ls[2:2000], TT_nl[2:2000])
     plt.plot(ls[2:2000], TT_ql[2:2000])
     plt.legend(['TT_ql', 'TT_nl'])
     plt.xscale('log')
@@ -253,14 +218,43 @@ if 0:
     print('done')
 
 if 0:
-    result1 = TT().noise()
-    ql_data = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], (t(ls)*t(ls)*result1)
-             [2:2000]/(2*np.pi)/ql_data[2:2000])
+    plt.plot((TT_nl[2:2000]/TT_ql[2:2000]))
     plt.legend('ratio')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel(r'$L$')
-    plt.ylabel(r'quicklens / newlens')
+    plt.ylabel(r'newlens / quicklens')
     plt.show()
-    print('done')
+
+if 0:
+    EB_nl = t(ls)*t(ls)*EB().noise()/(2*np.pi)
+    EB_ql = np.real(np.loadtxt("data/EB.dat", dtype=complex))
+    plt.plot(ls[2:2000], EB_nl[2:2000])
+    plt.plot(ls[2:2000], EB_ql[2:2000])
+    plt.legend(['EB_nl', 'EB_ql'])
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
+
+if 0:
+    plt.plot((EB_nl[2:2000]/EB_ql[2:2000]))
+    plt.legend('ratio')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'newlens / quicklens')
+    plt.show()
+
+if 1:
+    TT_nl = t(ls)*t(ls)*TT().noise()/(2*np.pi)
+    EB_nl = t(ls)*t(ls)*EB().noise()/(2*np.pi)
+    plt.plot(ls[2:2000], TT_nl[2:2000])
+    plt.plot(ls[2:2000], EB_nl[2:2000])
+    plt.legend(['TT_nl', 'EB_ql'])
+    plt.xscale('log')
+    plt.ylabel('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()

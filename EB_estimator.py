@@ -3,14 +3,15 @@ import matplotlib.pyplot as plt
 import cwignerd
 import wignerd
 import path
+import pandas as pd
 
 # calculate the EB estimator using my new result as a demon
 lmax = 3000
 lmin = 2
 ls = np.arange(0, lmax+1)
-nlev_t = 5.  # temperature noise level, in uk.arcmin
-nlev_p = 5.
-beam_fwhm = 1.
+nlev_t = 1.  # temperature noise level, in uk.arcmin
+nlev_p = np.sqrt(2)
+beam_fwhm = 4.
 
 
 def bl(fwhm_arcmin, lmax):
@@ -217,6 +218,15 @@ if 0:
     plt.show()
     print('done')
 
+if 1:
+    filename_TT = './data/hu_TT.csv'
+    filename_EB = './data/hu_EB.csv'
+
+    TT_hu = np.array(pd.read_csv(filename_TT))
+    EB_hu = np.array(pd.read_csv(filename_EB))
+    TT_nl = t(ls)*t(ls)*TT().noise()/(2*np.pi)
+    EB_nl = t(ls)*t(ls)*EB().noise()/(2*np.pi)
+
 if 0:
     plt.plot((TT_nl[2:2000]/TT_ql[2:2000]))
     plt.legend('ratio')
@@ -227,8 +237,6 @@ if 0:
     plt.show()
 
 if 0:
-    EB_nl = t(ls)*t(ls)*EB().noise()/(2*np.pi)
-    EB_ql = np.real(np.loadtxt("data/EB.dat", dtype=complex))
     plt.plot(ls[2:2000], EB_nl[2:2000])
     plt.plot(ls[2:2000], EB_ql[2:2000])
     plt.legend(['EB_nl', 'EB_ql'])
@@ -247,14 +255,35 @@ if 0:
     plt.ylabel(r'newlens / quicklens')
     plt.show()
 
-if 1:
-    TT_nl = t(ls)*t(ls)*TT().noise()/(2*np.pi)
-    EB_nl = t(ls)*t(ls)*EB().noise()/(2*np.pi)
+if 0:
     plt.plot(ls[2:2000], TT_nl[2:2000])
     plt.plot(ls[2:2000], EB_nl[2:2000])
-    plt.legend(['TT_nl', 'EB_ql'])
+#    plt.plot(TT_hu[0:, 0], TT_hu[0:, 1])
+#    plt.plot(EB_hu[0:, 0], EB_hu[0:, 1])
+    plt.legend(['TT_noise', 'EB_noise', 'TT_noise_hu', 'EB_noise_hu'])
     plt.xscale('log')
     plt.ylabel('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
+
+if 0:
+    plt.plot(TT_hu[0:, 0], TT_hu[0:, 1])
+#    plt.plot(EB_hu[0:, 0], EB_hu[0:, 1])
+    plt.legend(['TT_noise_hu', 'EB_noise_hu'])
+    plt.xscale('log')
+    plt.ylabel('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
+
+# compared with Hu's data given by Mat
+if 1:
+    plt.plot(ls[2:2000], TT_nl[2:2000])
+    plt.plot(TT_hu[0:, 0], TT_hu[0:, 1])
+    plt.legend(['TT_noise', 'TT_noise_hu'])
+    plt.xscale('log')
+    plt.yscale('log')
     plt.xlabel(r'$L$')
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()

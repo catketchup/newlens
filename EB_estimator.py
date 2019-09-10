@@ -207,12 +207,6 @@ class EB:
 def t(ell): return (ell*(ell+1.))
 
 
-class plot:
-    def __init__(self, *args):
-        self.lower_limit = args[0]
-        self.upper_limit = args[1]
-        self.ls = np.arange(self.lower_limit, self.upper_limit)
-
 
 if 0:
     TT_nl = t(ls)*t(ls)*TT(lmin, lmax).noise()/(2*np.pi)
@@ -234,30 +228,8 @@ if 1:
     TT_hu = np.array(pd.read_csv(filenalme_TT))
     EB_hu = np.array(pd.read_csv(filenalme_EB))
     TT_nl = t(ls)*TT(lmin, lmax).noise()/(2*np.pi)
-    EB_nl = t(ls)*t(ls)*EB(lmin, lmax).noise()/(2*np.pi)
+    EB_nl = t(ls)*EB(lmin, lmax).noise()/(2*np.pi)
 
-
-if 0:
-    plt.plot(ls[2:2000], TT_nl[2:2000])
-    plt.plot(ls[2:2000], EB_nl[2:2000])
-#    plt.plot(TT_hu[0:, 0], TT_hu[0:, 1])
-#    plt.plot(EB_hu[0:, 0], EB_hu[0:, 1])
-    plt.legend(['TT_noise', 'EB_noise', 'TT_noise_hu', 'EB_noise_hu'])
-    plt.xscale('log')
-    plt.ylabel('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-
-if 0:
-    plt.plot(TT_hu[0:, 0], TT_hu[0:, 1])
-    plt.plot(EB_hu[0:, 0], EB_hu[0:, 1])
-    plt.legend(['TT_noise_hu', 'EB_noise_hu'])
-    plt.xscale('log')
-    plt.ylabel('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
 
 # colmpared with Hu's data given by Mat
 if 1:
@@ -270,8 +242,19 @@ if 1:
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()
 
-# data ratio of newlens and Hu's
 if 1:
+    plt.plot(ls[2:2000], EB_nl[2:2000])
+    plt.plot(EB_hu[:, 0], EB_hu[:, 1])
+    plt.legend(['EB_noise', 'EB_noise_hu'])
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
+    plt.show()
+
+
+
+if 0:
     f = scipy.interpolate.interp1d(TT_hu[:, 0], TT_hu[:, 1])
     xnew = np.arange(3, 1500)
     ynew = f(xnew)

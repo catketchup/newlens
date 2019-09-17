@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import cwignerd
 import wignerd
 import path
 import pandas as pd

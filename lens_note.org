@@ -1,4 +1,4 @@
-
+#+STARTUP: latexpreview
 - temperature noise level
 - arcmin
 - transfer function
@@ -12,3 +12,8 @@
 questions:
 - how polarization of the CMB radiation probe to detect the primodial gravitational waves?
 - the primodial gravitational waves?
+
+
+\begin{equation}
+\sin{\Theta}
+\end{equation}

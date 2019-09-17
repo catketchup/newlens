@@ -1,0 +1,4 @@
+\begin{equation}
+q^{XY}(L) = 1/2 \sum_{l_X} \sum_{l_Y}
+                     W^{XY}(l_X, l_Y, L) \bar{X}(l_X) \bar{Y}(l_Y)
+\end{equation}

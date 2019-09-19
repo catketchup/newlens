@@ -4,7 +4,8 @@ import wignerd
 import path
 import pandas as pd
 import scipy.interpolate
-
+import load_data
+import noise_model
 # calculate the EB estimator using lmy new result as a delmon
 lmax = 3000
 lmin = 2
@@ -14,57 +15,11 @@ nlev_p = np.sqrt(2)*40
 bealm_fwhlm = 7
 
 
-def bl(fwhlm_arclmin, lmax):
-    """ returns the lmap-level transfer function for a sylmlmetric Gaussian bealm.
-         * fwhlm_arclmin      = bealm full-width-at-half-lmaxilmulm (fwhlm) in arclmin.
-         * lmax             = lmaxilmulm lmultipole.
-    """
-    ls = np.arange(0, lmax+1)
-    return np.exp(-(fwhlm_arclmin * np.pi/180./60.)**2 / (16.*np.log(2.)) * ls*(ls+1.))
+noise = noise_model.noise(bealm_fwhlm, lmax, nlev_t, nlev_p)
+nltt = noise.tt()
+nlee = noise.ee()
+nlbb = noise.bb()
 
-
-bl = bl(bealm_fwhlm, lmax)
-
-# noise spectra
-# bl is transfer functions
-nltt = (np.pi/180./60.*nlev_t)**2 / bl**2
-nlee = nlbb = (np.pi/180./60.*nlev_p)**2 / bl**2
-data_version = 1
-
-
-class unlensed:
-    def __init__(self, *args):
-        self.lmin = args[0]
-        self.lmax = args[1]
-        self.estimator = args[2]
-        self.data = np.loadtxt(path.file(data_version, 'unlensed').file_data())
-
-    def spectra(self):
-        ell = np.arange(self.lmin, self.lmax+1)
-        if self.estimator == 'TT':
-            return np.concatenate([np.zeros(self.lmin), self.data[0: (self.lmax-self.lmin+1), 1]/(ell*(ell+1.))*2*np.pi])
-
-        if self.estimator == 'EE':
-            return np.concatenate([np.zeros(self.lmin), self.data[0: (self.lmax-self.lmin+1), 2]/(ell*(ell+1.))*2*np.pi])
-
-
-class lensed:
-    def __init__(self, *args):
-        self.lmin = args[0]
-        self.lmax = args[1]
-        self.estimator = args[2]
-        self.data = np.loadtxt(path.file(data_version, 'lensed').file_data())
-
-    def spectra(self):
-        ell = np.arange(self.lmin, self.lmax+1)
-        if self.estimator == 'TT':
-            return np.concatenate([np.zeros(self.lmin), self.data[0: (self.lmax-self.lmin+1), 1]/(ell*(ell+1.))*2*np.pi])
-
-        if self.estimator == 'EE':
-            return np.concatenate([np.zeros(self.lmin), self.data[0: (self.lmax-self.lmin+1), 2]/(ell*(ell+1.))*2*np.pi])
-
-        if self.estimator == 'BB':
-            return np.concatenate([np.zeros(self.lmin), self.data[0: (self.lmax-self.lmin+1), 3]/(ell*(ell+1.))*2*np.pi])
 
 
 class TT:
@@ -72,8 +27,8 @@ class TT:
         self.lmin = args[0]
         self.lmax = args[1]
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
-        self.array1 = unlensed(self.lmin, self.lmax, 'TT').spectra()
-        self.array2 = lensed(self.lmin, self.lmax, 'TT').spectra()+nltt
+        self.array1 = load_data.unlensed(self.lmin, self.lmax, 'TT').spectra()
+        self.array2 = load_data.lensed(self.lmin, self.lmax, 'TT').spectra()+nltt
 
     def zeta_00(self):
         cl_00 = np.zeros(self.lmax+1, dtype=complex)
@@ -124,9 +79,9 @@ class EB:
         self.lmin = args[0]
         self.lmax = args[1]
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
-        self.array1 = unlensed(self.lmin, self.lmax, 'EE').spectra()
-        self.array2 = lensed(self.lmin, self.lmax, 'EE').spectra()+nlbb
-        self.array3 = lensed(self.lmin, self.lmax, 'BB').spectra()+nlbb
+        self.array1 = load_data.unlensed(self.lmin, self.lmax, 'EE').spectra()
+        self.array2 = load_data.lensed(self.lmin, self.lmax, 'EE').spectra()+nlbb
+        self.array3 = load_data.lensed(self.lmin, self.lmax, 'BB').spectra()+nlbb
 
 #    import ipdb
 #    ipdb.set_trace()

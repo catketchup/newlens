@@ -6,6 +6,7 @@ import pandas as pd
 import load_data
 import numpy
 import noise_model
+import ipdb
 
 lmax = 3000
 lmin = 2
@@ -14,8 +15,13 @@ nlev_t = 27.  # telmperature noise level, in uk.arclmin
 nlev_p = np.sqrt(2) * 40
 bealm_fwhlm = 7
 
+noise = noise_model.noise(bealm_fwhlm, lmax, nlev_t, nlev_p)
+nltt = noise.tt()
+nlee = noise.ee()
+nlbb = noise.bb()
 
-class phi:
+
+class phi_TT:
     """reconstruction of phi_lm and phi spectra"""
 
     def __init__(self, *args):
@@ -32,24 +38,48 @@ class phi:
         ell = np.arange(self.lmin, self.lmax + 1)
         return ell * (ell + 1)
 
+#    ipdb.set_trace()
+
     def factor2(self):
         ell = np.arange(self.lmin, self.lmax + 1)
         return (2 * ell + 1)**(1 / 2)
 
-    def lm(self, ell, m):
+    def part11(self, m, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
         ell = np.arange(self.lmin, self.lmax + 1)
-        cl1 = np.zeros(self.lmax + 1, dtype=complex)
-        cl2 = np.zeros(self.lmax + 1, dtype=complex)
+        cl[ell] = (-1)**ell * (-1 * self.factor1() * self.factor2()
+                               ) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
 
-        cl1[ell] = (
-            -1)**ell * self.unlensed_TT / self.lensed_TT * self.factor1()
-        return ell * m
+    def part12(self, m, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-1)**ell * (self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(-m - m1, 0, cl)
 
-    def spectra(self, ell):
-        m = np.arange(-2 * ell, 2 * ell)
-        return np.sum(self.lm(ell, m)**2)
+    def block1(self, m, m1):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part11(m, m1) * self.part12(m, m1))
+        ret[ell] = (1 / 2 * (-1)**ell * cl[ell])
+        return ret
+
+
+#    def part21(self):
+# def spectra(self, ell):
+#     m = np.arange(-2 * ell, 2 * ell)
+#     return np.sum(self.lm(ell, m)**2)
 
     """ Phi = phi(lmin, lmax)   Phi.lm(ell,m) and Phi.spectra(ell) """
+
+Phi_TT = phi_TT(lmin, lmax)
+print(Phi_TT.block1(1, 1)[2:2000])
+
+ls = np.arange(0, lmax + 1)
+
+plt.plot(ls[2:2000], Phi_TT.block1(1, 1)[2:2000])
+plt.show()
 
 
 class zeta:

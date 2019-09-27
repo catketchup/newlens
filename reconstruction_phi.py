@@ -44,25 +44,131 @@ class phi_TT:
         ell = np.arange(self.lmin, self.lmax + 1)
         return (2 * ell + 1)**(1 / 2)
 
-    def part11(self, m, m1):
+    def part11(self, m1):
         cl = np.zeros(self.lmax + 1, dtype=complex)
         ell = np.arange(self.lmin, self.lmax + 1)
-        cl[ell] = (-1)**ell * (-1 * self.factor1() * self.factor2()
-                               ) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        cl[ell] = (-1)**ell * (
+            -1 * self.factor2()) * self.unlensed_TT[ell] / self.lensed_TT[ell]
         return self.zeta.cf_from_cl(m1, 0, cl)
 
-    def part12(self, m, m1):
+    def part12(self, m2):
         cl = np.zeros(self.lmax + 1, dtype=complex)
         ell = np.arange(self.lmin, self.lmax + 1)
-        cl[ell] = (-1)**ell * (self.factor2()) / self.lensed_TT[ell]
-        return self.zeta.cf_from_cl(-m - m1, 0, cl)
+        cl[ell] = (-1)**ell * (
+            self.factor1() * self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
 
-    def block1(self, m, m1):
+    def block1(self, m, m1, m2):
         ret = np.zeros(self.lmax + 1, dtype=complex)
         ell = np.arange(self.lmin, self.lmax + 1)
         cl = self.zeta.cl_from_cf(self.lmax, m, 0,
-                                  self.part11(m, m1) * self.part12(m, m1))
-        ret[ell] = (1 / 2 * (-1)**ell * cl[ell])
+                                  self.part11(m1) * self.part12(m2))
+        ret[ell] = (1 / 2 * (-1)**ell * self.factor2() * cl[ell])
+        return ret
+
+    def part21(self, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-1)**ell * (self.factor1() * self.factor2()
+                               ) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
+
+    def part22(self, m2):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-1)**ell * (self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
+
+    def block2(self, m, m1, m2):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part21(m1) * self.part22(m2))
+        ret[ell] = (1 / 2 * (-1)**ell * self.factor2() * cl[ell])
+        return ret
+
+    def part31(self, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-1)**ell * (
+            self.factor2()) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
+
+    def part32(self, m2):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-1)**ell * (self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
+
+    def block3(self, m1, m2, m):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part31(m1) * self.part32(m2))
+        ret[ell] = (1 / 2 *
+                    (-1)**ell * self.factor1() * self.factor2() * cl[ell])
+        return ret
+
+    def part41(self, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (-self.factor1() * self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
+
+    def part42(self, m2):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = self.factor2() * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
+
+    def block4(self, m, m1, m2):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part41(m1) * self.part42(m2))
+        ret[ell] = 1 / 2 * self.factor2() * cl[ell]
+        return ret
+
+    def part51(self, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
+
+    def part52(self, m2):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (self.factor1() * self.factor2()
+                   ) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
+
+    def block5(self, m, m1, m2):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part51(m1) * self.part52(m2))
+        ret[ell] = (1 / 2 * self.factor2() * cl[ell])
+        return ret
+
+    def part61(self, m1):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (self.factor1() * self.factor2()) / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m1, 0, cl)
+
+    def part62(self, m2):
+        cl = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl[ell] = (
+            self.factor2()) * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        return self.zeta.cf_from_cl(m2, 0, cl)
+
+    def block6(self, m, m1, m2):
+        ret = np.zeros(self.lmax + 1, dtype=complex)
+        ell = np.arange(self.lmin, self.lmax + 1)
+        cl = self.zeta.cl_from_cf(self.lmax, m, 0,
+                                  self.part61(m1) * self.part62(m2))
+        ret[ell] = (1 / 2 * self.factor2() * cl[ell])
         return ret
 
 
@@ -74,35 +180,33 @@ class phi_TT:
     """ Phi = phi(lmin, lmax)   Phi.lm(ell,m) and Phi.spectra(ell) """
 
 Phi_TT = phi_TT(lmin, lmax)
-print(Phi_TT.block1(1, 1)[2:2000])
-
 ls = np.arange(0, lmax + 1)
 
-plt.plot(ls[2:2000], Phi_TT.block1(1, 1)[2:2000])
+
+def t(ls):
+    return ls * (ls + 1)
+
+
+m1 = 1
+m2 = -2
+m = 1
+
+# plt.plot(ls[2:2000],
+#          Phi_TT.block1(m1, m2, m)[2:2000] + Phi_TT.block2(m1, m2, m)[2:2000] +
+#          Phi_TT.block3(m1, m2, m)[2:2000])
+
+#plt.yscale('log')
 plt.show()
 
 
-class zeta:
-    """calculate zeta functions"""
+def plot_seperate(m1, m2, m):
+    plt.plot(ls[2:2000], Phi_TT.block1(m1, m2, m)[2:2000])
+    plt.plot(ls[2:2000], Phi_TT.block2(m1, m2, m)[2:2000])
+    plt.plot(ls[2:2000], Phi_TT.block3(m1, m2, m)[2:2000])
+    plt.plot(ls[2:2000], Phi_TT.block4(m1, m2, m)[2:2000])
+    plt.plot(ls[2:2000], Phi_TT.block5(m1, m2, m)[2:2000])
+    plt.plot(ls[2:2000], Phi_TT.block6(m1, m2, m)[2:2000])
+    plt.show()
 
-    def __int__(self, *args):
-        """input the lmin, lmax and spectra"""
-        self.lmin = args[0]
-        self.lmax = args[1]
-        self.estimator = args[2]
-        self.quadrature = wignerd.gauss_legendre_quadature(
-            3 * self.lmax / 2 + 1)
-        self.TT_unlensed = load_data.unlensed(self.lmin, self.lmax,
-                                              'TT').spectra()
-        self.TT_lensed = load_data.lensed(self.lmin, self.lmax, 'TT').spectra()
 
-    def factors(self):
-        """calculate the factor arrays"""
-
-        if self.estimator == 'TT':
-            return np.arange(self.lmax)
-
-    def zeta(self, n1, n2):
-        """calculate zeta functions, n1 and n2 are the parameters of the wignerd functions in them, cl is the arrays input before the wignerd functions"""
-        ell = np.arange(self.lmin, self.lmax + 1)
-        return self.zeta.cf_from_cl(n1, n2, self.factor)
+plot_seperate(m1, m2, m)

@@ -7,6 +7,8 @@ import load_data
 import numpy
 import noise_model
 import ipdb
+import healpy
+import pixell
 
 lmax = 3000
 lmin = 2

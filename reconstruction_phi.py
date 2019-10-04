@@ -211,4 +211,5 @@ def plot_seperate(m1, m2, m):
     plt.show()
 
 
-plot_seperate(m1, m2, m)
+if 1:
+    plot_seperate(m1, m2, m)

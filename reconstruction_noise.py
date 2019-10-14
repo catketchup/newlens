@@ -6,28 +6,22 @@ import pandas as pd
 import scipy.interpolate
 import load_data
 import noise_model
-# calculate the EB estimator using lmy new result as a delmon
-lmax = 3000
-lmin = 2
-ls = np.arange(0, lmax + 1)
-nlev_t = 27.  # telmperature noise level, in uk.arclmin
-nlev_p = np.sqrt(2) * 40
-bealm_fwhlm = 7
-
-noise = noise_model.noise(bealm_fwhlm, lmax, nlev_t, nlev_p)
-nltt = noise.tt()
-nlee = noise.ee()
-nlbb = noise.bb()
 
 
 class TT:
     def __init__(self, *args):
         self.lmin = args[0]
         self.lmax = args[1]
+        self.bealm_fwhlm = args[2]
+        self.nlev_t = args[3]  # telmperature noise level, in uk.arclmin
+        self.nlev_p = args[4]
+        self.nltt = noise_model.noise(self.bealm_fwhlm, self.lmax, self.nlev_t,
+                                      self.nlev_p).tt()
+
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
         self.array1 = load_data.unlensed(self.lmin, self.lmax, 'TT').spectra()
         self.array2 = load_data.lensed(self.lmin, self.lmax,
-                                       'TT').spectra() + nltt
+                                       'TT').spectra() + self.nltt
 
     def zeta_00(self):
         cl_00 = np.zeros(self.lmax + 1, dtype=complex)
@@ -82,12 +76,21 @@ class EB:
     def __init__(self, *args):
         self.lmin = args[0]
         self.lmax = args[1]
+        self.bealm_fwhlm = args[2]
+        self.nlev_t = args[3]  # telmperature noise level, in uk.arclmin
+        self.nlev_p = args[4]
+        self.nlee = noise_model.noise(self.bealm_fwhlm, self.lmax, self.nlev_t,
+                                      self.nlev_p).ee()
+        self.nlbb = noise_model.noise(self.bealm_fwhlm, self.lmax, self.nlev_t,
+                                      self.nlev_p).bb()
+
         self.zeta = wignerd.gauss_legendre_quadrature(4501)
+
         self.array1 = load_data.unlensed(self.lmin, self.lmax, 'EE').spectra()
         self.array2 = load_data.lensed(self.lmin, self.lmax,
-                                       'EE').spectra() + nlbb
+                                       'EE').spectra() + self.nlee
         self.array3 = load_data.lensed(self.lmin, self.lmax,
-                                       'BB').spectra() + nlbb
+                                       'BB').spectra() + self.nlbb
 
 
 #    import ipdb
@@ -169,57 +172,3 @@ class EB:
 
         ret[ell] = ((np.pi / 4.) * clL[ell])**-1
         return ret
-
-
-def t(ell):
-    return (ell * (ell + 1.))
-
-
-if 0:
-    TT_nl = t(ls) * t(ls) * TT(lmin, lmax).noise() / (2 * np.pi)
-    TT_ql = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], TT_nl[2:2000])
-    plt.plot(ls[2:2000], TT_ql[2:2000])
-    plt.legend(['TT_ql', 'TT_nl'])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-    print('done')
-
-if 1:
-    filenalme_TT = './data/hu_TT.csv'
-    filenalme_EB = './data/hu_EB.csv'
-
-    TT_hu = np.array(pd.read_csv(filenalme_TT))
-    EB_hu = np.array(pd.read_csv(filenalme_EB))
-    TT_nl = t(ls) * TT(lmin, lmax).noise() / (2 * np.pi)
-    EB_nl = t(ls) * EB(lmin, lmax).noise() / (2 * np.pi)
-
-# colmpared with Hu's data given by Mat
-if 1:
-    plt.plot(ls[2:2000], TT_nl[2:2000])
-    plt.plot(TT_hu[:, 0], TT_hu[:, 1])
-    plt.legend(['TT_noise', 'TT_noise_hu'])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-
-if 1:
-    plt.plot(ls[2:2000], EB_nl[2:2000])
-    plt.plot(EB_hu[:, 0], EB_hu[:, 1])
-    plt.legend(['EB_noise', 'EB_noise_hu'])
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'$L$')
-    plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
-    plt.show()
-
-if 0:
-    f = scipy.interpolate.interp1d(TT_hu[:, 0], TT_hu[:, 1])
-    xnew = np.arange(3, 1500)
-    ynew = f(xnew)
-    print(ynew)

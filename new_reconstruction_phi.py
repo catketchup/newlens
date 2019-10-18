@@ -35,51 +35,142 @@ class phi_TT:
         self.input_map = sphtfunc.synfast(
             self.lensed_TT, self.nside)  #create a map from self.lensed_TT
         self.alm = sphtfunc.map2alm(self.input_map)
+        self.norm = reconstruction_noise.TT(self.lmin, self.lmax, bealm_fwhlm,
+                                            nlev_t, nlev_p).noise()
 
-    # def factor1(self):
-    #     ell = np.arange(self.lmin, self.lmax + 1)
-    #     return ell * (ell + 1)
+    def factor_a(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+        return ell * (ell + 1)
 
-    # def factor2(self):
-    #     ell = np.arange(self.lmin, self.lmax + 1)
-    #     return (2 * ell + 1)**(1 / 2)
+    def factor_b(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+        return (2 * ell + 1)**(1 / 2)
 
-    def part1(self):
+    def part11(self):
         ell = np.arange(self.lmin, self.lmax + 1)
 
-        cl1 = np.sqrt(4 * np.pi) * (-1)**(
-            ell + 1) * self.unlensed_TT[ell] / self.lensed_TT[ell]
-        factor1 = sphtfunc.almxfl(self.alm, cl1)
-        map1 = sphtfunc.alm2map(factor1, self.nside)
+        cl1 = (-1)**ell * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
 
-        cl2 = np.sqrt(4 * np.pi) * (-1)**(ell + 1) * (ell * (
-            ell + 1)) / self.lensed_TT[ell]
-        factor2 = sphtfunc.almxfl(self.alm, cl2)
-        map2 = sphtfunc.alm2map(factor2, self.nside)
+        cl2 = (-1)**ell * self.factor_a() / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
 
-        phi_lm = sphtfunc.map2alm(map1 * map2)
-
-        phi_cl = (1 / (np.sqrt(4 * np.pi)) * (-1)**
-                  (ell + 1))**2 * sphtfunc.alm2cl(phi_lm)[ell] / (ell *
-                                                                  (ell + 1))**2
-        # visufunc.mollview(map1 * map2)
-        # plt.show()
-        #return reconstruction_noise.TT(self.lmin, self.lmax).noise()
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            -1 / 2 * (-1)**ell * self.norm[ell] / np.sqrt(self.factor_a()))
+        phi_cl = sphtfunc.alm2cl(phi_lm)
         return phi_cl
 
-    def part2(self):
-        return 1
+    def part12(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+
+        cl1 = (-1)**ell * self.factor_a() * self.unlensed_TT[
+            ell] / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
+
+        cl2 = (-1)**ell / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
+
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            1 / 2 * (-1)**ell * self.norm[ell] / np.sqrt(self.factor_a()))
+
+        phi_cl = sphtfunc.alm2cl(phi_lm)
+        return phi_cl
+
+    def part13(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+
+        cl1 = (-1)**ell * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
+
+        cl2 = (-1)**ell / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
+
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            1 / 2 * (-1)**ell * self.norm[ell] * np.sqrt(self.factor_a()))
+
+        phi_cl = sphtfunc.alm2cl(phi_lm)
+        return phi_cl
+
+    def part21(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+
+        cl1 = self.factor_a() / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
+
+        cl2 = self.unlensed_TT[ell] / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
+
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            -1 / 2 * self.norm[ell] / np.sqrt(self.factor_a()))
+        phi_cl = sphtfunc.alm2cl(phi_lm)
+        return phi_cl
+
+    def part22(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+
+        cl1 = 1 / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
+
+        cl2 = self.factor_a() * self.unlensed_TT[ell] / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
+
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            1 / 2 * self.norm[ell] / np.sqrt(self.factor_a()))
+
+        phi_cl = sphtfunc.alm2cl(phi_lm)
+        return phi_cl
+
+    def part23(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+
+        cl1 = 1 / self.lensed_TT[ell]
+        alm1 = sphtfunc.almxfl(self.alm, cl1)
+        map1 = sphtfunc.alm2map(alm1, self.nside)
+
+        cl2 = self.unlensed_TT[ell] / self.lensed_TT[ell]
+        alm2 = sphtfunc.almxfl(self.alm, cl2)
+        map2 = sphtfunc.alm2map(alm2, self.nside)
+
+        phi_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2),
+            1 / 2 * self.norm[ell] * np.sqrt(self.factor_a()))
+
+        phi_cl = sphtfunc.alm2cl(phi_lm)
+        return phi_cl
+
+    def phi_cl(self):
+        return self.part11() + self.part12() + self.part13() + self.part21(
+        ) + self.part22() + self.part23()
+
+
+def t(ell):
+    return (ell * (ell + 1.))
 
 
 nside = 400  #nside should be large enough
 test = phi_TT(lmin, lmax, nside)
-phi_cl = np.array(test.part1())
+Phi_cl = np.array(test.phi_cl())
 lmax = 1000
 lmin = 2
 bealm_fwhlm = 7
 nlev_t = 27.  # telmperature noise level, in uk.arclmin
 nlev_p = np.sqrt(2) * 40
-noise_tt = reconstruction_noise.TT(lmin, lmax, bealm_fwhlm, nlev_t,
-                                   nlev_p).noise()
-plt.plot(np.square(noise_tt)[0:999] * phi_cl)
+plt.xscale('log')
+plt.yscale('log')
+plt.plot(Phi_cl / (2 * np.pi))
 plt.show()

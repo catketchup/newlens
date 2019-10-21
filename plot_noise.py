@@ -20,6 +20,7 @@ def t(ell):
     return (ell * (ell + 1.))
 
 
+print(ls)
 if 1:
     filenalme_TT = './data/hu_TT.csv'
     filenalme_EB = './data/hu_EB.csv'
@@ -32,9 +33,12 @@ if 1:
                                             nlev_p).noise() / (2 * np.pi)
 
 # colmpared with Hu's data given by Mat
+
+# plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
+plt.show()
 if 1:
-    plt.plot(ls[2:2000], TT_nl[2:2000])
-    plt.plot(TT_hu[:, 0], TT_hu[:, 1])
+    plt.plot(ls[lmin:lmax], TT_nl[lmin:lmax])
+    #    plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
     plt.legend(['TT_noise', 'TT_noise_hu'])
     plt.xscale('log')
     plt.yscale('log')
@@ -42,9 +46,9 @@ if 1:
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()
 
-if 1:
-    plt.plot(ls[2:2000], EB_nl[2:2000])
-    plt.plot(EB_hu[:, 0], EB_hu[:, 1])
+if 0:
+    plt.plot(ls[lmin:lmax], EB_nl[lmin:lmax])
+    plt.plot(EB_hu[lmin:lmax, 0], EB_hu[lmin:lmax, 1])
     plt.legend(['EB_noise', 'EB_noise_hu'])
     plt.xscale('log')
     plt.yscale('log')
@@ -55,8 +59,8 @@ if 1:
 if 0:
     TT_nl = t(ls) * t(ls) * TT(lmin, lmax).noise() / (2 * np.pi)
     TT_ql = np.real(np.loadtxt("data/TT.dat", dtype=complex))
-    plt.plot(ls[2:2000], TT_nl[2:2000])
-    plt.plot(ls[2:2000], TT_ql[2:2000])
+    plt.plot(ls[lmin:lmax], TT_nl[lmin:lmax])
+    plt.plot(ls[lmin:lmax], TT_ql[lmin:lmax])
     plt.legend(['TT_ql', 'TT_nl'])
     plt.xscale('log')
     plt.yscale('log')

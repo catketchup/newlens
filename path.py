@@ -7,12 +7,14 @@ class file:
     def file_data(self):
         if self.data_version == 1:
             if self.datatype == 'unlensed':
-                return self.file_path+'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat'
+                return self.file_path + 'planck_lensing_wp_highL_bestFit_20130627_scalCls.dat'
             if self.datatype == 'lensed':
-                return self.file_path+'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat'
+                return self.file_path + 'planck_lensing_wp_highL_bestFit_20130627_lensedCls.dat'
+            if self.datatype == 'input_cldd':
+                return self.file_path + 'planck_lensing_wp_highL_bestFit_20130627_lenspotentialCls.dat'
 
         if self.data_version == 2:
             if self.datatype == 'unlensed':
                 return self.file_path + 'cosmo2017_10K_acc3_scalCls.dat'
             if self.datatype == 'lensed':
-                return self.file_path+'cosmo2017_10K_acc3_lensedCls.dat'
+                return self.file_path + 'cosmo2017_10K_acc3_lensedCls.dat'

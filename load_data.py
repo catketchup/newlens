@@ -60,3 +60,19 @@ class lensed:
                 self.data[0:(self.lmax - self.lmin + 1), 3] /
                 (ell * (ell + 1.)) * 2 * np.pi
             ])
+
+
+class input_cldd:
+    def __init__(self, *args):
+        self.lmin = args[0]
+        self.lmax = args[1]
+        self.data = np.loadtxt(path.file(1, 'input_cldd').file_data())
+
+    def spectra(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+        # return np.concatenate(
+        #     [np.zeros(self.lmin), self.data[0:(self.lmax - self.lmin + 1), 5]])
+        return np.concatenate([
+            np.zeros(self.lmin), self.data[0:(self.lmax - self.lmin + 1), 5] /
+            (ell * (ell + 1.)) * 2 * np.pi
+        ])

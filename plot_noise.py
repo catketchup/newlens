@@ -35,10 +35,10 @@ if 1:
 # colmpared with Hu's data given by Mat
 
 # plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
-plt.show()
+
 if 1:
     plt.plot(ls[lmin:lmax], TT_nl[lmin:lmax])
-    #    plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
+    plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
     plt.legend(['TT_noise', 'TT_noise_hu'])
     plt.xscale('log')
     plt.yscale('log')

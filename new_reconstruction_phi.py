@@ -8,7 +8,7 @@ import ipdb
 import reconstruction_noise
 
 
-class phi_TT:
+class rec_TT:
     """ using TT estimator to reconstruct phi_lm and phi_cl using healpy """
 
     def __init__(self, *args):
@@ -22,7 +22,7 @@ class phi_TT:
                                           'TT').spectra() + nltt
         self.input_map = sphtfunc.synfast(
             self.lensed_TT, self.nside)  #create a map from self.lensed_TT
-        self.alm = np.conj(sphtfunc.map2alm(self.input_map))
+        self.alm = sphtfunc.map2alm(self.input_map, lmax=self.lmax)
         self.norm = reconstruction_noise.TT(self.lmin, self.lmax, bealm_fwhlm,
                                             nlev_t, nlev_p).noise()
 
@@ -30,61 +30,10 @@ class phi_TT:
         ell = np.arange(self.lmin, self.lmax + 1)
         return ell * (ell + 1)
 
-    # def factor_b(self):
-    #     ell = np.arange(self.lmin, self.lmax + 1)
-    #     return (2 * ell + 1)**(1 / 2)
-
-    def part11(self):
+    def part1(self):
         ell = np.arange(self.lmin, self.lmax + 1)
 
-        cl1 = (-1)**ell * self.unlensed_TT[ell] / self.lensed_TT[ell]
-        alm1 = sphtfunc.almxfl(self.alm, cl1)
-        map1 = sphtfunc.alm2map(alm1, self.nside)
-
-        cl2 = (-1)**ell * self.factor_a() / self.lensed_TT[ell]
-        alm2 = sphtfunc.almxfl(self.alm, cl2)
-        map2 = sphtfunc.alm2map(alm2, self.nside)
-
-        # ret_lm = sphtfunc.almxfl(
-        #     sphtfunc.map2alm(map1 * map2),
-        #     1 / 2 * (-1)**ell * self.norm[ell] / self.factor_a())
-        ret_lm = -1 / 2 * sphtfunc.map2alm(map1 * map2)
-        return ret_lm
-
-    def part12(self):
-        ell = np.arange(self.lmin, self.lmax + 1)
-
-        cl1 = (-1)**ell * self.factor_a() * self.unlensed_TT[
-            ell] / self.lensed_TT[ell]
-        alm1 = sphtfunc.almxfl(self.alm, cl1)
-        map1 = sphtfunc.alm2map(alm1, self.nside)
-
-        cl2 = (-1)**ell / self.lensed_TT[ell]
-        alm2 = sphtfunc.almxfl(self.alm, cl2)
-        map2 = sphtfunc.alm2map(alm2, self.nside)
-
-        ret_lm = 1 / 2 * sphtfunc.map2alm(map1 * map2)
-        return ret_lm
-
-    def part13(self):
-        ell = np.arange(self.lmin, self.lmax + 1)
-
-        cl1 = (-1)**ell * self.unlensed_TT[ell] / self.lensed_TT[ell]
-        alm1 = sphtfunc.almxfl(self.alm, cl1)
-        map1 = sphtfunc.alm2map(alm1, self.nside)
-
-        cl2 = (-1)**ell / self.lensed_TT[ell]
-        alm2 = sphtfunc.almxfl(self.alm, cl2)
-        map2 = sphtfunc.alm2map(alm2, self.nside)
-
-        ret_lm = 1 / 2 * sphtfunc.almxfl(
-            sphtfunc.map2alm(map1 * map2), self.factor_a())
-        return ret_lm
-
-    def part21(self):
-        ell = np.arange(self.lmin, self.lmax + 1)
-
-        cl1 = self.factor_a() / self.lensed_TT[ell]
+        cl1 = -self.factor_a() / self.lensed_TT[ell]
         alm1 = sphtfunc.almxfl(self.alm, cl1)
         map1 = sphtfunc.alm2map(alm1, self.nside)
 
@@ -92,10 +41,10 @@ class phi_TT:
         alm2 = sphtfunc.almxfl(self.alm, cl2)
         map2 = sphtfunc.alm2map(alm2, self.nside)
 
-        ret_lm = -1 / 2 * sphtfunc.map2alm(map1 * map2)
+        ret_lm = sphtfunc.map2alm(map1 * map2, lmax=self.lmax)
         return ret_lm
 
-    def part22(self):
+    def part2(self):
         ell = np.arange(self.lmin, self.lmax + 1)
 
         cl1 = 1 / self.lensed_TT[ell]
@@ -106,10 +55,10 @@ class phi_TT:
         alm2 = sphtfunc.almxfl(self.alm, cl2)
         map2 = sphtfunc.alm2map(alm2, self.nside)
 
-        ret_lm = 1 / 2 * sphtfunc.map2alm(map1 * map2)
+        ret_lm = sphtfunc.map2alm(map1 * map2, lmax=self.lmax)
         return ret_lm
 
-    def part23(self):
+    def part3(self):
         ell = np.arange(self.lmin, self.lmax + 1)
 
         cl1 = 1 / self.lensed_TT[ell]
@@ -120,18 +69,21 @@ class phi_TT:
         alm2 = sphtfunc.almxfl(self.alm, cl2)
         map2 = sphtfunc.alm2map(alm2, self.nside)
 
-        ret_lm = 1 / 2 * sphtfunc.almxfl(
-            sphtfunc.map2alm(map1 * map2), self.factor_a())
+        ret_lm = sphtfunc.almxfl(
+            sphtfunc.map2alm(map1 * map2, lmax=self.lmax), self.factor_a())
         return ret_lm
 
-    def phi_lm(self):
+    def lm(self):
         ell = np.arange(self.lmin, self.lmax + 1)
-        alm = self.part11() - self.part12() + self.part13() - self.part21(
-        ) + self.part22() + self.part23()
-        return sphtfunc.almxfl(alm, self.norm[ell] * np.sqrt(self.factor_a()))
 
-    def phi_cl(self):
-        ret_cl = sphtfunc.alm2cl(self.phi_lm())
+        # ret_alm = self.part1()
+        ret_alm = sphtfunc.almxfl(self.part1() + self.part2() + self.part3(),
+                                  1 / 2 * self.norm[ell] * 1 / self.factor_a())
+        return ret_alm
+
+    def cl(self):
+        ell = np.arange(self.lmin, self.lmax + 1)
+        ret_cl = sphtfunc.alm2cl(self.lm())
         return ret_cl
 
 
@@ -164,7 +116,7 @@ class phi_TT:
 #     def part11(self):
 #         ell = np.arange(self.lmin, self.lmax + 1)
 
-nide = 400
+nside = 400
 lmax = 1000
 lmin = 2
 ls = np.arange(0, lmax + 1)
@@ -182,33 +134,19 @@ def t(ell):
     return (ell * (ell + 1.))
 
 
-Phi_TT = phi_TT(lmin, lmax, nside)
-Phi_TT_lm = Phi_TT.phi_lm()
-Phi_TT_cl = Phi_TT.phi_cl()
-if 0:
-    print(Phi_TT_lm)
-    Phi_map = sphtfunc.alm2map(Phi_TT_lm, nside)
-    visufunc.mollview(Phi_map)
+Noise_cl_TT = t(ls) * reconstruction_noise.TT(lmin, lmax, bealm_fwhlm, nlev_t,
+                                              nlev_p).noise() / (2 * np.pi)
+Input_cldd = t(ls) * load_data.input_cldd(lmin, lmax).spectra() / (2 * np.pi)
+Rec_cldd_TT = rec_TT(lmin, lmax, nside).cl()
 
-if 1:
-    print(np.size(Phi_TT_cl))
-if 0:  ## plot of phi_cl_TT
-
+if 1:  ## plot of phi_cl_TT
+    plt.clf()
     plt.xscale('log')
     plt.yscale('log')
+    plt.plot(ls[lmin:lmax - 1], Noise_cl_TT[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1], Input_cldd[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1], (Input_cldd + Noise_cl_TT)[lmin:lmax - 1])
     plt.plot(ls[lmin:lmax - 1],
-             t(ls)[lmin:lmax - 1] * Phi_TT_cl[lmin:lmax - 1])
-    # plt.plot(Phi_TT.part11())
-    # plt.plot(Phi_TT.part12())
-    # plt.plot(Phi_TT.part13())
-    # plt.plot(Phi_TT.part21())
-    # plt.plot(Phi_TT.part22())
-    # plt.plot(Phi_TT.part23())
-    # plt.plot(ls[2:1000], (t(ls)[2:2000] * Phi_TT_cl[2:1000]) / (2 * np.pi))
-    plt.plot(ls[2:1000], (t(ls) * reconstruction_noise.TT(
-        lmin, lmax, bealm_fwhlm, nlev_t, nlev_p).noise())[2:1000] /
-             (2 * np.pi))
-    plt.plot(ls[2:1000], (t(ls) * reconstruction_noise.EB(
-        lmin, lmax, bealm_fwhlm, nlev_t, nlev_p).noise())[2:1000] /
-             (2 * np.pi))
+             t(ls)[lmin:lmax - 1] * Rec_cldd_TT[lmin:lmax - 1] / (2 * np.pi))
+    plt.legend(['Noise_TT', 'Input_cldd', 'Noise_TT +Input_cldd', 'Rec_cldd'])
     plt.show()

@@ -77,8 +77,9 @@ class rec_TT:
         ell = np.arange(self.lmin, self.lmax + 1)
 
         # ret_alm = self.part1()
-        ret_alm = sphtfunc.almxfl(self.part1() + self.part2() + self.part3(),
-                                  1 / 2 * self.norm[ell] * 1 / self.factor_a())
+        ret_alm = sphtfunc.almxfl(
+            self.part1() + self.part2() + self.part3(),
+            1 / 2 * self.norm[ell] * 1 / np.sqrt(self.factor_a()))
         return ret_alm
 
     def cl(self):
@@ -86,6 +87,56 @@ class rec_TT:
         ret_cl = sphtfunc.alm2cl(self.lm())
         return ret_cl
 
+
+nside = 500
+lmax = 1000
+lmin = 2
+ls = np.arange(0, lmax + 1)
+nlev_t = 27.  # telmperature noise level, in uk.arclmin
+nlev_p = np.sqrt(2) * 40
+bealm_fwhlm = 7
+
+noise = noise_model.noise(bealm_fwhlm, lmax, nlev_t, nlev_p)
+nltt = noise.tt()
+nlee = noise.ee()
+nlbb = noise.bb()
+
+
+def t(ell):
+    return (ell * (ell + 1.))
+
+
+Noise_cl_TT = reconstruction_noise.TT(lmin, lmax, bealm_fwhlm, nlev_t,
+                                      nlev_p).noise()
+Input_cldd = load_data.input_cldd(lmin, lmax).spectra()
+Rec_cldd_TT = rec_TT(lmin, lmax, nside).cl()
+
+if 0:
+    plt.clf()
+    plt.xscale('log')
+    plt.yscale('log')
+    Part1_cl, Part2_cl, Part3_cl = rec_TT(lmin, lmax, nside).parts_cl()
+    plt.plot(ls[lmin:lmax - 1], Part1_cl[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1], Part2_cl[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1], Part3_cl[lmin:lmax - 1])
+    plt.legend(['part1', 'part2', 'part3'])
+if 1:  ## plot of phi_cl_TT
+    plt.clf()  #clear figure
+    plt.xscale('log')
+    plt.yscale('log')
+    # plt.plot(ls[lmin:lmax - 1],
+    #          t(ls)[lmin:lmax - 1] * Noise_cl_TT[lmin:lmax - 1] / (2 * np.pi))
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] *
+             (Input_cldd[lmin:lmax - 1] + Noise_cl_TT[lmin:lmax - 1]) /
+             (2 * np.pi))
+    # plt.plot(ls[lmin:lmax - 1], (Input_cldd + Noise_cl_TT)[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] * (Rec_cldd_TT[lmin:lmax - 1]) / (2 * np.pi))
+    plt.legend(['Input_cldd+Noise_TT', 'Rec_cldd+Noise_TT'])
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L / 2\pi$')
+    plt.show()
 
 # class phi_EB():
 #     """ using EB estimator to reconstruct phi_lm and phi_cl using healpy """
@@ -116,37 +167,8 @@ class rec_TT:
 #     def part11(self):
 #         ell = np.arange(self.lmin, self.lmax + 1)
 
-nside = 400
-lmax = 1000
-lmin = 2
-ls = np.arange(0, lmax + 1)
-nlev_t = 27.  # telmperature noise level, in uk.arclmin
-nlev_p = np.sqrt(2) * 40
-bealm_fwhlm = 7
+# def parts_cl(self):
+#     ell = np.arange(self.lmin, self.lmax + 1)
 
-noise = noise_model.noise(bealm_fwhlm, lmax, nlev_t, nlev_p)
-nltt = noise.tt()
-nlee = noise.ee()
-nlbb = noise.bb()
-
-
-def t(ell):
-    return (ell * (ell + 1.))
-
-
-Noise_cl_TT = t(ls) * reconstruction_noise.TT(lmin, lmax, bealm_fwhlm, nlev_t,
-                                              nlev_p).noise() / (2 * np.pi)
-Input_cldd = t(ls) * load_data.input_cldd(lmin, lmax).spectra() / (2 * np.pi)
-Rec_cldd_TT = rec_TT(lmin, lmax, nside).cl()
-
-if 1:  ## plot of phi_cl_TT
-    plt.clf()
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.plot(ls[lmin:lmax - 1], Noise_cl_TT[lmin:lmax - 1])
-    plt.plot(ls[lmin:lmax - 1], Input_cldd[lmin:lmax - 1])
-    plt.plot(ls[lmin:lmax - 1], (Input_cldd + Noise_cl_TT)[lmin:lmax - 1])
-    plt.plot(ls[lmin:lmax - 1],
-             t(ls)[lmin:lmax - 1] * Rec_cldd_TT[lmin:lmax - 1] / (2 * np.pi))
-    plt.legend(['Noise_TT', 'Input_cldd', 'Noise_TT +Input_cldd', 'Rec_cldd'])
-    plt.show()
+#     return sphtfunc.alm2cl(self.part1()), sphtfunc.alm2cl(
+#         self.part2()), sphtfunc.alm2cl(self.part3())

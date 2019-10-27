@@ -88,7 +88,7 @@ class rec_TT:
         return ret_cl
 
 
-nside = 500
+nside = 400
 lmax = 1000
 lmin = 2
 ls = np.arange(0, lmax + 1)
@@ -109,30 +109,54 @@ def t(ell):
 Noise_cl_TT = reconstruction_noise.TT(lmin, lmax, bealm_fwhlm, nlev_t,
                                       nlev_p).noise()
 Input_cldd = load_data.input_cldd(lmin, lmax).spectra()
-Rec_cldd_TT = rec_TT(lmin, lmax, nside).cl()
 
 if 0:
-    plt.clf()
+    plt.clf()  #clear figure
     plt.xscale('log')
     plt.yscale('log')
-    Part1_cl, Part2_cl, Part3_cl = rec_TT(lmin, lmax, nside).parts_cl()
-    plt.plot(ls[lmin:lmax - 1], Part1_cl[lmin:lmax - 1])
-    plt.plot(ls[lmin:lmax - 1], Part2_cl[lmin:lmax - 1])
-    plt.plot(ls[lmin:lmax - 1], Part3_cl[lmin:lmax - 1])
-    plt.legend(['part1', 'part2', 'part3'])
+
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] * (Input_cldd[lmin:lmax - 1]) / (2 * np.pi))
+
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] * (Noise_cl_TT[lmin:lmax - 1]) / (2 * np.pi))
+    plt.legend(['Noise_cl_TT', 'Input_cldd'])
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L / 2\pi$')
+    plt.show()
+
 if 1:  ## plot of phi_cl_TT
+    Rec_cldd_TT = rec_TT(lmin, lmax, nside).cl()
     plt.clf()  #clear figure
     plt.xscale('log')
     plt.yscale('log')
     # plt.plot(ls[lmin:lmax - 1],
     #          t(ls)[lmin:lmax - 1] * Noise_cl_TT[lmin:lmax - 1] / (2 * np.pi))
     plt.plot(ls[lmin:lmax - 1],
-             t(ls)[lmin:lmax - 1] *
-             (Input_cldd[lmin:lmax - 1] + Noise_cl_TT[lmin:lmax - 1]) /
-             (2 * np.pi))
+             t(ls)[lmin:lmax - 1] * (Input_cldd[lmin:lmax - 1]) / (2 * np.pi))
     # plt.plot(ls[lmin:lmax - 1], (Input_cldd + Noise_cl_TT)[lmin:lmax - 1])
     plt.plot(ls[lmin:lmax - 1],
-             t(ls)[lmin:lmax - 1] * (Rec_cldd_TT[lmin:lmax - 1]) / (2 * np.pi))
+             t(ls)[lmin:lmax - 1] * np.abs(
+                 (Rec_cldd_TT[lmin:lmax - 1] - Noise_cl_TT[lmin:lmax - 1])) /
+             (2 * np.pi))
+    plt.legend(['Input_cldd+Noise_TT', 'Rec_cldd+Noise_TT'])
+    plt.xlabel(r'$L$')
+    plt.ylabel(r'$[L[L+1] C_L / 2\pi$')
+    plt.show()
+
+if 0:  ## plot of phi_cl_TT
+    plt.clf()  #clear figure
+    plt.xscale('log')
+    # plt.yscale('log')
+    # plt.plot(ls[lmin:lmax - 1],
+    #          t(ls)[lmin:lmax - 1] * Noise_cl_TT[lmin:lmax - 1] / (2 * np.pi))
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] * (Input_cldd[lmin:lmax - 1]) / (2 * np.pi))
+    # plt.plot(ls[lmin:lmax - 1], (Input_cldd + Noise_cl_TT)[lmin:lmax - 1])
+    plt.plot(ls[lmin:lmax - 1],
+             t(ls)[lmin:lmax - 1] *
+             (Rec_cldd_TT[lmin:lmax - 1] - Noise_cl_TT[lmin:lmax - 1]) /
+             (2 * np.pi))
     plt.legend(['Input_cldd+Noise_TT', 'Rec_cldd+Noise_TT'])
     plt.xlabel(r'$L$')
     plt.ylabel(r'$[L[L+1] C_L / 2\pi$')

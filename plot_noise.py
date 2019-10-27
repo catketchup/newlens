@@ -36,7 +36,7 @@ if 1:
 
 # plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
 
-if 1:
+if 0:
     plt.plot(ls[lmin:lmax], TT_nl[lmin:lmax])
     plt.plot(TT_hu[lmin:lmax, 0], TT_hu[lmin:lmax, 1])
     plt.legend(['TT_noise', 'TT_noise_hu'])
@@ -46,7 +46,7 @@ if 1:
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()
 
-if 0:
+if 1:
     plt.plot(ls[lmin:lmax], EB_nl[lmin:lmax])
     plt.plot(EB_hu[lmin:lmax, 0], EB_hu[lmin:lmax, 1])
     plt.legend(['EB_noise', 'EB_noise_hu'])

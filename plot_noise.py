@@ -46,7 +46,7 @@ if 0:
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()
 
-if 1:
+if 0:
     plt.plot(ls[lmin:lmax], EB_nl[lmin:lmax])
     plt.plot(EB_hu[lmin:lmax, 0], EB_hu[lmin:lmax, 1])
     plt.legend(['EB_noise', 'EB_noise_hu'])
@@ -68,3 +68,12 @@ if 0:
     plt.ylabel(r'$[L[L+1] C_L^{\phi\phi} / 2\pi$')
     plt.show()
     print('done')
+
+if 1:  # plot unlensed ps and lensed ps
+    unlensed_ps = load_data.unlensed(lmin, lmax, 'TT').spectra()
+    lensed_ps = load_data.lensed(lmin, lmax, 'TT').spectra()
+    plt.plot(ls[lmin:lmax],
+             t(ls)[lmin:lmax] * unlensed_ps[lmin:lmax] / (2 * np.pi))
+    plt.plot(ls[lmin:lmax],
+             t(ls)[lmin:lmax] * lensed_ps[lmin:lmax] / (2 * np.pi))
+    plt.legend(['unlense ps', 'lensed ps'])

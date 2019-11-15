@@ -1,0 +1,30 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{setspace}
+\usepackage{physics}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+  \item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2}]}{\end{trivlist}}
+
+
+\begin{document}
+estimators
+\begin{equation}
+  q^{XY}(L) = 1/2 \int{d^2 l_X} \int{d^2 l_Y}
+                    W^{XY}(l_X, l_Y, L) \bar{X}(l_X) \bar{Y}(l_Y)
+\end{equation}
+
+for full-sky estimator calculation:
+
+\begin{equation}
+  W^{XY} = \sum_{i=0}^{N_i} \int{d^2 n}
+                    {}_s^{i,X}Y_{l_X m_X}(n) W^{i,X}(l_X) *
+                     {}_s^{i,Y}Y_{l_Y m_Y}(n) W^{i,Y}(l_Y) *
+                      {}_s^{i,L}Y_{  L M  }(n) W_^{i,L}( L )
+\end{equation}
+
+\end{document}

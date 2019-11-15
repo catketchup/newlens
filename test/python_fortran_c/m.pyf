@@ -1,0 +1,16 @@
+! File m.pyf
+python module m
+interface
+  subroutine m(n,x,y)
+    intent(c) m                ! foo is a C function
+    intent(c)                     ! all foo arguments are 
+                                  ! considered as C based
+    integer intent(hide), depend(x) :: n=len(x)  ! n is the length
+                                                 ! of input array x
+    double precision intent(in) :: x(n)          ! x is input array 
+                                                 ! (or  arbitrary sequence)
+    double precision intent(out) :: y(n)         ! y is output array, 
+                                                 ! see code in foo.c
+  end subroutine foo
+end interface
+end python module m

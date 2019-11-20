@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from newlens import path, math
+from newlens import path
 import pandas as pd
+import importlib
+importlib.reload(path)
 
 
 class unlensed:

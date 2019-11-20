@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from newlens import math, load_data, noise_model
-import path
+from newlens import load_data, noise_model, path, wignerd
 import pandas as pd
 import scipy.interpolate
 import importlib
@@ -19,7 +18,7 @@ class TT:
         self.nltt = noise_model.noise(self.bealm_fwhlm, self.lmax, self.nlev_t,
                                       self.nlev_p).tt()
 
-        self.zeta = math.wignerd.gauss_legendre_quadrature(4501)
+        self.zeta = wignerd.gauss_legendre_quadrature(4501)
         self.array1 = load_data.unlensed(self.lmin, self.lmax, 'TT').spectra()
         self.array2 = load_data.lensed(self.lmin, self.lmax,
                                        'TT').spectra() + self.nltt

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from newlens import math, path, load_data
+from newlens import path, load_data
 import pandas as pd
 
 
